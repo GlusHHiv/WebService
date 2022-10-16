@@ -19,6 +19,10 @@ public class HumanController : Controller
         new Hobby
         {
             Name = "Программировать"
+        },
+        new Hobby
+        {
+            Name = "Слушать музыку"
         }
     };
     
