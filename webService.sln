@@ -4,6 +4,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webService.WebApi", "webSer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webApiMessenger.Domain", "webApiMessenger.Domain\webApiMessenger.Domain.csproj", "{D2CFC499-119B-4E62-BA09-D61901C8E92D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webApiMessenger.Application", "webApiMessenger.Application\webApiMessenger.Application.csproj", "{4F7CF1C5-808E-4B37-9044-8B09B960156B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentations", "Presentations", "{2DBF14E5-F0EB-4328-95C7-7AD9F219EF89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webApiMessenger.WebApi", "webApiMessenger.WebApi\webApiMessenger.WebApi.csproj", "{CDCD21EE-370D-4CB0-95BD-C7AC93A21E9D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrasturcture", "Infrasturcture", "{3FE0B931-FF72-4A23-88C7-DBF9B690B799}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +26,16 @@ Global
 		{D2CFC499-119B-4E62-BA09-D61901C8E92D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2CFC499-119B-4E62-BA09-D61901C8E92D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2CFC499-119B-4E62-BA09-D61901C8E92D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F7CF1C5-808E-4B37-9044-8B09B960156B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F7CF1C5-808E-4B37-9044-8B09B960156B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F7CF1C5-808E-4B37-9044-8B09B960156B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F7CF1C5-808E-4B37-9044-8B09B960156B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDCD21EE-370D-4CB0-95BD-C7AC93A21E9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDCD21EE-370D-4CB0-95BD-C7AC93A21E9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDCD21EE-370D-4CB0-95BD-C7AC93A21E9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDCD21EE-370D-4CB0-95BD-C7AC93A21E9D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CDCD21EE-370D-4CB0-95BD-C7AC93A21E9D} = {2DBF14E5-F0EB-4328-95C7-7AD9F219EF89}
 	EndGlobalSection
 EndGlobal

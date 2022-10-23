@@ -1,9 +1,6 @@
-﻿namespace webApiMessenger.Domain.Entities;
+﻿namespace webApiMessenger.WebApi.DTOs;
 
-/// <summary>
-/// Пользователь
-/// </summary>
-public class User : BaseEntity
+public class RegistrationUserDTO
 {
     /// <summary>
     /// Ник пользователя
@@ -29,14 +26,4 @@ public class User : BaseEntity
     /// Возраст
     /// </summary>
     public int Age { get; set; }
-    
-    /// <summary>
-    /// Друзья пользователя
-    /// </summary>
-    public List<User> Friends { get; set; }
-
-    /// <summary>
-    /// Дата и время регистрации
-    /// </summary>
-    public DateTime RegisterDateTime { get; set; } = DateTime.Now;
 }
