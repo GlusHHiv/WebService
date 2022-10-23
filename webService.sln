@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webService.WebApi", "webService.WebApi\webService.WebApi.csproj", "{7D0EC158-C745-452F-B08F-C2875F9C1B2F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webApiMessenger.Domain", "webApiMessenger.Domain\webApiMessenger.Domain.csproj", "{D2CFC499-119B-4E62-BA09-D61901C8E92D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{7D0EC158-C745-452F-B08F-C2875F9C1B2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D0EC158-C745-452F-B08F-C2875F9C1B2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D0EC158-C745-452F-B08F-C2875F9C1B2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2CFC499-119B-4E62-BA09-D61901C8E92D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2CFC499-119B-4E62-BA09-D61901C8E92D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2CFC499-119B-4E62-BA09-D61901C8E92D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2CFC499-119B-4E62-BA09-D61901C8E92D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
