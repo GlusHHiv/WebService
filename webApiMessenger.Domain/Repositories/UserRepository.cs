@@ -1,55 +1,31 @@
-﻿using System.Collections.ObjectModel;
+﻿using Microsoft.EntityFrameworkCore;
 using webApiMessenger.Domain.Entities;
 
 namespace webApiMessenger.Domain.Repositories;
 
 public class UserRepository
 {
-    private static List<User> _users = new();
-    public ReadOnlyCollection<User> Users => _users.AsReadOnly();
+    private readonly IDbContext _dbContext;
 
-    static UserRepository()
+    public UserRepository(IDbContext dbContext)
     {
-        var anton = new User
-        {
-            Id = 1,
-            Nick = "Anton",
-            Email = "anton@mail.ru",
-            Age = 21,
-            Login = "anton_21",
-            Password = "123123123",
-            Friends = new List<User>()
-        };
-        var roma = new User
-        {
-            Id = 2,
-            Nick = "Roma",
-            Email = "roma@mail.ru",
-            Age = 22,
-            Login = "roma",
-            Password = "123123123",
-            Friends = new List<User>
-            {
-                anton
-            }
-        };
-        // anton.Friends.Add(roma);
-        _users.Add(anton);
-        _users.Add(roma);
+        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
     public void AddUser(User user)
     {
-        var findUser = _users.Find(u => u.Id == user.Id);
+        var findUser = _dbContext.Users.FirstOrDefault(u => u.Id == user.Id);
         if (findUser != null)
             throw new ArgumentException($"Пользователь с id {user.Id} существует!");
         
-        _users.Add(user);
+        _dbContext.Users.Add(user);
+        _dbContext.SaveChanges();
     }
+    
     public void AddFriend(int user1id, int user2id) 
     {
-        var findUser1 = _users.Find(u => u.Id == user1id);
-        var findUser2 = _users.Find(u => u.Id == user2id);
+        var findUser1 = _dbContext.Users.Include(user => user.Friends).FirstOrDefault(u => u.Id == user1id);
+        var findUser2 = _dbContext.Users.FirstOrDefault(u => u.Id == user2id);
         if (findUser1 == null )
         {
             throw new ArgumentException($"Пользователь с id {user1id} не существует!");
@@ -59,5 +35,11 @@ public class UserRepository
             throw new ArgumentException($"Пользователь с id {user2id} не существует!");
         }
         findUser1.Friends.Add(findUser2);
+        _dbContext.SaveChanges();
+    }
+
+    public List<User> GetUsers()
+    {
+        return _dbContext.Users.ToList();
     }
 }

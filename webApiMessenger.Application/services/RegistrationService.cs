@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using webApiMessenger.Domain;
 using webApiMessenger.Domain.Entities;
 using webApiMessenger.Domain.Repositories;
 
@@ -7,9 +8,9 @@ namespace webApiMessenger.Application.services;
 public class RegistrationService
 {
     private UserRepository _userRepository;
-    public RegistrationService()
+    public RegistrationService(IDbContext dbContext)
     {
-        _userRepository = new UserRepository();
+        _userRepository = new UserRepository(dbContext);
     }
 
     public void RegisterUser(string login, string password, string email, string nick, int age)
@@ -21,7 +22,6 @@ public class RegistrationService
 
         var newUser = new User
         {
-            Id = _userRepository.Users.Count + 1,
             Age = age,
             Email = email,
             Nick = nick,
@@ -33,6 +33,6 @@ public class RegistrationService
 
     public IEnumerable<User> GetUsers()
     {
-        return _userRepository.Users;
+        return _userRepository.GetUsers();
     }
 }

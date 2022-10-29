@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using webApiMessenger.Domain;
 using webApiMessenger.Domain.Repositories;
 
 namespace webApiMessenger.Application.services
@@ -10,14 +11,13 @@ namespace webApiMessenger.Application.services
     public class UserService
     {
         private UserRepository _userRepository;
-        public UserService()
+        public UserService(IDbContext dbContext)
         {
-            _userRepository = new UserRepository();
+            _userRepository = new UserRepository(dbContext);
         }
         public void AddFriend(int user1id, int user2id) 
         {
             _userRepository.AddFriend(user1id, user2id);
-
         }
     }
 }

@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\webApiMessenger.Application\webApiMessenger.Application.csproj" />
+      <ProjectReference Include="..\webApiMessenger.Persistence\webApiMessenger.Persistence.csproj" />
     </ItemGroup>
 
 </Project>

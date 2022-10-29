@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using webApiMessenger.Application.services;
+using webApiMessenger.Domain;
 using webApiMessenger.Domain.Entities;
 using webApiMessenger.WebApi.DTOs;
 
@@ -9,13 +10,20 @@ namespace webApiMessenger.WebApi.Controllers;
 [Route("[controller]/[action]")]
 public class UserController : Controller
 {
-    private UserService _userService = new();
+    private UserService _userService;
+    private RegistrationService _registrationService; 
+
+    public UserController(IDbContext dbContext)
+    {
+        _userService = new UserService(dbContext);
+        _registrationService = new RegistrationService(dbContext);
+    }
+
     [HttpPost]
     public void AddFriend (int user1id, int user2id) 
     { 
         _userService.AddFriend(user1id, user2id);
     }
-    private RegistrationService _registrationService = new(); 
     
     [HttpPost]
     public void Register(RegistrationUserDTO registrationUserDto)
