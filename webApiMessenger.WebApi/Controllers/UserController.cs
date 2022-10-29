@@ -9,6 +9,12 @@ namespace webApiMessenger.WebApi.Controllers;
 [Route("[controller]/[action]")]
 public class UserController : Controller
 {
+    private UserService _userService = new();
+    [HttpPost]
+    public void AddFriend (int user1id, int user2id) 
+    { 
+        _userService.AddFriend(user1id, user2id);
+    }
     private RegistrationService _registrationService = new(); 
     
     [HttpPost]

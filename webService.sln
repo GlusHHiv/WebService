@@ -1,14 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webService.WebApi", "webService.WebApi\webService.WebApi.csproj", "{7D0EC158-C745-452F-B08F-C2875F9C1B2F}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webApiMessenger.Domain", "webApiMessenger.Domain\webApiMessenger.Domain.csproj", "{D2CFC499-119B-4E62-BA09-D61901C8E92D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webApiMessenger.Domain", "webApiMessenger.Domain\webApiMessenger.Domain.csproj", "{D2CFC499-119B-4E62-BA09-D61901C8E92D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webApiMessenger.Application", "webApiMessenger.Application\webApiMessenger.Application.csproj", "{4F7CF1C5-808E-4B37-9044-8B09B960156B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webApiMessenger.Application", "webApiMessenger.Application\webApiMessenger.Application.csproj", "{4F7CF1C5-808E-4B37-9044-8B09B960156B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentations", "Presentations", "{2DBF14E5-F0EB-4328-95C7-7AD9F219EF89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webApiMessenger.WebApi", "webApiMessenger.WebApi\webApiMessenger.WebApi.csproj", "{CDCD21EE-370D-4CB0-95BD-C7AC93A21E9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webApiMessenger.WebApi", "webApiMessenger.WebApi\webApiMessenger.WebApi.csproj", "{CDCD21EE-370D-4CB0-95BD-C7AC93A21E9D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrasturcture", "Infrasturcture", "{3FE0B931-FF72-4A23-88C7-DBF9B690B799}"
 EndProject
@@ -18,10 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7D0EC158-C745-452F-B08F-C2875F9C1B2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7D0EC158-C745-452F-B08F-C2875F9C1B2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7D0EC158-C745-452F-B08F-C2875F9C1B2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7D0EC158-C745-452F-B08F-C2875F9C1B2F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D2CFC499-119B-4E62-BA09-D61901C8E92D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D2CFC499-119B-4E62-BA09-D61901C8E92D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2CFC499-119B-4E62-BA09-D61901C8E92D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -35,7 +32,13 @@ Global
 		{CDCD21EE-370D-4CB0-95BD-C7AC93A21E9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDCD21EE-370D-4CB0-95BD-C7AC93A21E9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CDCD21EE-370D-4CB0-95BD-C7AC93A21E9D} = {2DBF14E5-F0EB-4328-95C7-7AD9F219EF89}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5D5F1C3A-1C78-4196-8A65-E0D586CCF8AC}
 	EndGlobalSection
 EndGlobal

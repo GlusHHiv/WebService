@@ -46,4 +46,18 @@ public class UserRepository
         
         _users.Add(user);
     }
+    public void AddFriend(int user1id, int user2id) 
+    {
+        var findUser1 = _users.Find(u => u.Id == user1id);
+        var findUser2 = _users.Find(u => u.Id == user2id);
+        if (findUser1 == null )
+        {
+            throw new ArgumentException($"Пользователь с id {user1id} не существует!");
+        }
+        if (findUser2 == null )
+        {
+            throw new ArgumentException($"Пользователь с id {user2id} не существует!");
+        }
+        findUser1.Friends.Add(findUser2);
+    }
 }
