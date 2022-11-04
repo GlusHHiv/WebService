@@ -10,6 +10,7 @@ namespace webApiMessenger.Application.services
 {
     public class UserService
     {
+         
         private UserRepository _userRepository;
         public UserService(IDbContext dbContext)
         {
@@ -19,5 +20,6 @@ namespace webApiMessenger.Application.services
         {
             _userRepository.AddFriend(user1id, user2id);
         }
+        
     }
 }
