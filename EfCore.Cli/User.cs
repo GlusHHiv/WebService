@@ -14,4 +14,11 @@ public class Book
     
     public int AuthorId { get; set; }
     public User Author { get; set; }
+    public Publisher Publisher { get; set; }
+}
+
+public class Publisher
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
 }

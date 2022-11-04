@@ -13,10 +13,13 @@ public class ApplicationDbContext : DbContext
         base.OnConfiguring(optionsBuilder);
     }
 
-    public ApplicationDbContext()
+    public ApplicationDbContext(bool IsFirstly = false)
     {
-        // Database.EnsureDeleted();
-        Database.EnsureCreated();
-        Database.AutoTransactionsEnabled = true;
+        if (IsFirstly)
+        {
+            Database.EnsureDeleted();
+            Database.EnsureCreated();
+            Database.AutoTransactionsEnabled = true;
+        }
     }
 }
