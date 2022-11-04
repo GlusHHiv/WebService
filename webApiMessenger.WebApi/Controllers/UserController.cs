@@ -57,18 +57,27 @@ public class UserController : Controller
         return Ok(entity);
     }
 
-    [HttpPatch]
-    public IActionResult Update(int id, UpdateUserDTO updateUserDto)
+    [HttpPut]
+    public IActionResult Update(int id, PutUpdateUserDTO putUpdateUserDto)
     {
         var user = _registrationService.GetUsers().FirstOrDefault(user => user.Id == id);
         if (user == null) return NotFound();
         
-        user.Age = updateUserDto.Age;
-        user.Email = updateUserDto.Email;
-        user.Login = updateUserDto.Login;
-        user.Nick = updateUserDto.Nick;
+        user.Age = putUpdateUserDto.Age;
+        user.Email = putUpdateUserDto.Email;
+        user.Login = putUpdateUserDto.Login;
+        user.Nick = putUpdateUserDto.Nick;
 
         _userService.UpdateUser(user);
+        return Ok();
+    }
+
+    [HttpPatch]
+    public IActionResult UpdatePath(int id, PutUpdateUserDTO putUpdateUserDto)
+    {
+        var user = _registrationService.GetUsers().FirstOrDefault(user => user.Id == id);
+        if (user == null) return NotFound();
+
         return Ok();
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace webApiMessenger.WebApi.DTOs;
 
-public class UpdateUserDTO
+public class PutUpdateUserDTO
 {
     /// <summary>
     /// Ник пользователя
