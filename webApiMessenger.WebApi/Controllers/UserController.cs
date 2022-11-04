@@ -44,15 +44,31 @@ public class UserController : Controller
     {
         return _registrationService.GetUsers();
     }
+    
     [HttpPatch]
     public IActionResult Patch(int id, [FromBody] JsonPatchDocument<User> patchEntity)
     {
-        var entity = GetUsers().FirstOrDefault(user => user.Id == id);
+        var entity = _registrationService.GetUsers().FirstOrDefault(user => user.Id == id);
         if (entity == null)
         {
             return NotFound();   
         }
         patchEntity.ApplyTo(entity, ModelState);
         return Ok(entity);
+    }
+
+    [HttpPatch]
+    public IActionResult Update(int id, UpdateUserDTO updateUserDto)
+    {
+        var user = _registrationService.GetUsers().FirstOrDefault(user => user.Id == id);
+        if (user == null) return NotFound();
+        
+        user.Age = updateUserDto.Age;
+        user.Email = updateUserDto.Email;
+        user.Login = updateUserDto.Login;
+        user.Nick = updateUserDto.Nick;
+
+        _userService.UpdateUser(user);
+        return Ok();
     }
 }

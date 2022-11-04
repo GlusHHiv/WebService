@@ -40,6 +40,12 @@ public class UserRepository
 
     public List<User> GetUsers()
     {
-        return _dbContext.Users.ToList();
+        return _dbContext.Users.AsNoTracking().ToList();
+    }
+
+    public void Update(User user)
+    {
+        _dbContext.Users.Attach(user).State = EntityState.Modified;
+        _dbContext.SaveChanges();
     }
 }
