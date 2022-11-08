@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\webApiMessenger.Domain\webApiMessenger.Domain.csproj" />
+      <ProjectReference Include="..\webApiMessenger.Persistence\webApiMessenger.Persistence.csproj" />
     </ItemGroup>
 
 </Project>

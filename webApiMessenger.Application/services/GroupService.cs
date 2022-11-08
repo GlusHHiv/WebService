@@ -1,6 +1,6 @@
 using webApiMessenger.Domain;
 using webApiMessenger.Domain.Entities;
-using webApiMessenger.Domain.Repositories;
+using webApiMessenger.Persistence.Repositories;
 
 namespace webApiMessenger.Application.services;
 
@@ -8,14 +8,13 @@ public class GroupService
 {
     private GroupChatRepository _groupChatRepository;
 
-    public GroupService(IDbContext dbContext)
+    public GroupService(GroupChatRepository groupChatRepository)
     {
-        _groupChatRepository = new GroupChatRepository(dbContext);
+        _groupChatRepository = groupChatRepository;
     }
 
     public void CreateGroupChat(int user1id, int user2id)
     {
-        
         _groupChatRepository.AddGroupChat(user1id, user2id);
     }
 
@@ -26,8 +25,8 @@ public class GroupService
     
     public void DeleteMember(int groupChatId, int removeUserId)
     {
-        _groupChatRepository.DeleteMember(groupChatId, removeUserId);
-    }    
+        _groupChatRepository.DeleteMemberAndTryDeleteGroupChat(groupChatId, removeUserId);
+    }
     
     public IEnumerable<GroupChat> GetGroupChats()
     {

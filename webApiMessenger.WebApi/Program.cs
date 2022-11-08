@@ -1,5 +1,7 @@
+using webApiMessenger.Application.services;
 using webApiMessenger.Domain;
 using webApiMessenger.Persistence;
+using webApiMessenger.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IDbContext, ApplicationDbContext>();
+
+builder.Services.AddScoped<GroupService>();
+builder.Services.AddScoped<RegistrationService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<MessengerService>();
+
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<MessageRepository>();
+builder.Services.AddScoped<GroupChatRepository>();
 
 var app = builder.Build();
 

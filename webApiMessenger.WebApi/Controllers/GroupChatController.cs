@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Mapster;
+using Microsoft.AspNetCore.Mvc;
 using webApiMessenger.Application.services;
 using webApiMessenger.Domain;
 using webApiMessenger.Domain.Entities;
@@ -12,9 +13,9 @@ public class GroupChatController : Controller
 {
     private GroupService _groupService;
 
-    public GroupChatController(IDbContext dbContext)
+    public GroupChatController(GroupService groupService)
     {
-        _groupService = new GroupService(dbContext);
+        _groupService = groupService;
     }
 
     [HttpPost]
@@ -37,8 +38,30 @@ public class GroupChatController : Controller
 
 
     [HttpGet]
-    public IEnumerable<GroupChat> GetGroupChats()
+    public IEnumerable<GroupChatDTO> GetGroupChats()
     {
-        return _groupService.GetGroupChats();
+        var groupChats = _groupService.GetGroupChats();
+        
+        // Ручками
+        // var groupChatDTOs = new List<GroupChatDTO>();
+        // foreach (var groupChat in groupChats)
+        // {
+        //     var members = groupChat.Members
+        //         .Select(groupChatMember => 
+        //             new MemberGroupChatDTO
+        //             {
+        //                 Id = groupChatMember.Id, 
+        //                 Nick = groupChatMember.Nick
+        //             }).ToList();
+        //
+        //     groupChatDTOs.Add(new GroupChatDTO
+        //     {
+        //         Id = groupChat.Id,
+        //         Members = members
+        //     });
+        // }
+        //var groupChatDTOs = groupChats.Select(g => g.Adapt<GroupChatDTO>());
+        var groupChatDTOs = groupChats.Adapt<List<GroupChatDTO>>();
+        return groupChatDTOs;
     }
 }
