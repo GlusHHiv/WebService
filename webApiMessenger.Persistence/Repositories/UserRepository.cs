@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using webApiMessenger.Domain;
 using webApiMessenger.Domain.Entities;
 
-namespace webApiMessenger.Domain.Repositories;
+namespace webApiMessenger.Persistence.Repositories;
 
 public class UserRepository
 {
@@ -40,6 +41,14 @@ public class UserRepository
 
     public List<User> GetUsers()
     {
-        return _dbContext.Users.ToList();
+        return _dbContext.Users.AsNoTracking().ToList();
+    }
+
+    public IEnumerable<User> GetFriends(int id)
+    {
+        var user = _dbContext.Users.Include(u => u.Friends).FirstOrDefault(u => u.Id == id);
+        if (user == null) throw new ArgumentException($"Пользователь с id {id} не существует!");
+        
+        return user.Friends;
     }
 }

@@ -19,5 +19,6 @@ public class ApplicationDbContext : DbContext, IDbContext
     public ApplicationDbContext()
     {
         Database.EnsureCreated();
+        Database.Migrate();
     }
 }

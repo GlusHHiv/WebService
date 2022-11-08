@@ -1,16 +1,15 @@
-﻿using System.Collections.ObjectModel;
-using webApiMessenger.Domain;
+﻿using webApiMessenger.Domain;
 using webApiMessenger.Domain.Entities;
-using webApiMessenger.Domain.Repositories;
+using webApiMessenger.Persistence.Repositories;
 
 namespace webApiMessenger.Application.services;
 
 public class RegistrationService
 {
     private UserRepository _userRepository;
-    public RegistrationService(IDbContext dbContext)
+    public RegistrationService(UserRepository userRepository)
     {
-        _userRepository = new UserRepository(dbContext);
+        _userRepository = userRepository;
     }
 
     public void RegisterUser(string login, string password, string email, string nick, int age)
@@ -29,10 +28,5 @@ public class RegistrationService
             Password = password
         };
         _userRepository.AddUser(newUser);
-    }
-
-    public IEnumerable<User> GetUsers()
-    {
-        return _userRepository.GetUsers();
     }
 }

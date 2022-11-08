@@ -9,4 +9,9 @@ public class GroupChat : BaseEntity
     /// Участиники
     /// </summary>
     public List<User> Members { get; set; }
+
+    /// <summary>
+    /// Сообщения в группе
+    /// </summary>
+    public List<Message> Messages { get; set; }
 }

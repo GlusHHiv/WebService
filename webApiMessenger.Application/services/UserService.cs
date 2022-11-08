@@ -1,23 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using webApiMessenger.Domain;
-using webApiMessenger.Domain.Repositories;
+﻿using webApiMessenger.Domain;
+using webApiMessenger.Domain.Entities;
+using webApiMessenger.Persistence.Repositories;
 
 namespace webApiMessenger.Application.services
 {
     public class UserService
     {
         private UserRepository _userRepository;
-        public UserService(IDbContext dbContext)
+        public UserService(UserRepository userRepository)
         {
-            _userRepository = new UserRepository(dbContext);
+            _userRepository = userRepository;
         }
         public void AddFriend(int user1id, int user2id) 
         {
             _userRepository.AddFriend(user1id, user2id);
+        }
+        
+        public IEnumerable<User> GetUsers()
+        {
+            return _userRepository.GetUsers();
+        }
+
+        public IEnumerable<User> GetFriends(int id)
+        {
+            return _userRepository.GetFriends(id);
         }
     }
 }

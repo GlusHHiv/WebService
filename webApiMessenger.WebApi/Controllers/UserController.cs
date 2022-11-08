@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Mapster;
+using Microsoft.AspNetCore.Mvc;
 using webApiMessenger.Application.services;
 using webApiMessenger.Domain;
 using webApiMessenger.Domain.Entities;
@@ -13,14 +14,14 @@ public class UserController : Controller
     private UserService _userService;
     private RegistrationService _registrationService; 
 
-    public UserController(IDbContext dbContext)
+    public UserController(UserService userService, RegistrationService registrationService)
     {
-        _userService = new UserService(dbContext);
-        _registrationService = new RegistrationService(dbContext);
+        _userService = userService;
+        _registrationService = registrationService;
     }
 
     [HttpPost]
-    public void AddFriend (int user1id, int user2id) 
+    public void AddFriend(int user1id, int user2id) 
     { 
         _userService.AddFriend(user1id, user2id);
     }
@@ -38,8 +39,16 @@ public class UserController : Controller
     }
 
     [HttpGet]
-    public IEnumerable<User> GetUsers()
+    public IEnumerable<UserWithoutFriendsDTO> GetUsers()
     {
-        return _registrationService.GetUsers();
+        var users = _userService.GetUsers();
+        return users.Adapt<IEnumerable<UserWithoutFriendsDTO>>();
+    }
+
+    [HttpGet]
+    public IEnumerable<UserWithoutFriendsDTO> GetFriends(int id)
+    {
+        var userFriends = _userService.GetFriends(id);
+        return userFriends.Adapt<IEnumerable<UserWithoutFriendsDTO>>();
     }
 }

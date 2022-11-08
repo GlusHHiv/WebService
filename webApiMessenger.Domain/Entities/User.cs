@@ -39,4 +39,14 @@ public class User : BaseEntity
     /// Дата и время регистрации
     /// </summary>
     public DateTime RegisterDateTime { get; set; } = DateTime.Now;
+
+    /// <summary>
+    /// Групп чаты в которых участвует пользователь
+    /// </summary>
+    public List<GroupChat> GroupChats { get; set; }
+
+    /// <summary>
+    /// Последнее прочитанное сообщения в группе
+    /// </summary>
+    public List<Message> LastReadMessagesInGroupChat { get; set; }
 }
