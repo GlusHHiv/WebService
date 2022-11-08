@@ -24,6 +24,11 @@ public class GroupService
         _groupChatRepository.AddMember(groupChatid, user1id);
     }
     
+    public void DeleteMember(int groupChatId, int removeUserId)
+    {
+        _groupChatRepository.DeleteMember(groupChatId, removeUserId);
+    }    
+    
     public IEnumerable<GroupChat> GetGroupChats()
     {
         return _groupChatRepository.GetGroupChats();

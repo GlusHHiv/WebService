@@ -28,6 +28,13 @@ public class GroupChatController : Controller
     {
         _groupService.AddMember(groupChatid, user1id);
     }
+    
+    [HttpDelete]
+    public void DeleteMember(int groupChatId, int removeUserId)
+    {
+        _groupService.DeleteMember(groupChatId, removeUserId);
+    }
+
 
     [HttpGet]
     public IEnumerable<GroupChat> GetGroupChats()
