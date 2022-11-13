@@ -1,14 +1,14 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using webApiMessenger.Application.services;
-using webApiMessenger.Domain;
-using webApiMessenger.Domain.Entities;
 using webApiMessenger.WebApi.DTOs;
 
 namespace webApiMessenger.WebApi.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
+[Authorize]
 public class GroupChatController : Controller
 {
     private GroupService _groupService;
