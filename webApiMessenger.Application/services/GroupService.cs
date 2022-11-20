@@ -32,4 +32,9 @@ public class GroupService
     {
         return _groupChatRepository.GetGroupChats();
     }
+
+    public bool GroupChatContainUser(int groupChatId, int userId)
+    {
+        return _groupChatRepository.GroupChatContainUser(groupChatId, userId);
+    }
 }

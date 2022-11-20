@@ -69,4 +69,11 @@ public class GroupChatRepository
     {
         return _dbContext.GroupChats.Include(groupChat => groupChat.Members).AsNoTracking().ToList();
     }
+
+    public bool GroupChatContainUser(int groupChatId, int userId)
+    {
+        var groupChat = _dbContext.GroupChats.Include(g => g.Members).FirstOrDefault(g => g.Id == groupChatId);
+        if (groupChat == null) throw new ArgumentException($"Группа с id {groupChatId} не существует!");
+        return groupChat.Members.Exists(u => u.Id == userId);
+    }
 }

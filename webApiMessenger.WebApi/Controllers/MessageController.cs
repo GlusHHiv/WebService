@@ -12,10 +12,12 @@ namespace webApiMessenger.WebApi.Controllers;
 public class MessageController : Controller
 {
     private readonly MessengerService _messengerService;
+    private readonly GroupService _groupService;
 
-    public MessageController(MessengerService messengerService)
+    public MessageController(MessengerService messengerService, GroupService groupService)
     {
         _messengerService = messengerService ?? throw new ArgumentNullException(nameof(messengerService));
+        _groupService = groupService ?? throw new ArgumentNullException(nameof(groupService));
     }
 
     
@@ -23,6 +25,9 @@ public class MessageController : Controller
     public ActionResult<IEnumerable<GetMessagesDTO>> GetMessages(int groupChatId)
     {
         var userId = int.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "Id").Value);
+        if (!_groupService.GroupChatContainUser(groupChatId, userId))
+            return Forbid("Вы не можете получить сообщения группы в которой не состоите");
+        
         var oldMessages = _messengerService.GetOldMessagesFromGroupChat(groupChatId, userId);
         var newMessages = _messengerService.GetNewMessagesFromGroupChat(groupChatId, userId);
         // Если пользователь не состоит в групп чате, отдаем Forbid()
@@ -30,8 +35,8 @@ public class MessageController : Controller
 
         return Ok(new GetMessagesDTO
         {
-            OldDTO = oldMessages.Adapt<IEnumerable<MessageDTO>>(),
-            NewDTO = newMessages.Adapt<IEnumerable<MessageDTO>>()
+            OldMessages = oldMessages.Adapt<IEnumerable<MessageDTO>>(),
+            NewMessages = newMessages.Adapt<IEnumerable<MessageDTO>>()
         });
         
         
