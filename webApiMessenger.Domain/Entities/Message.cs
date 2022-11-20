@@ -24,4 +24,6 @@ public class Message : BaseEntity
     /// Текст сообщения
     /// </summary>
     public string Text { get; set; }
+    
+    public List<User> ReadedBy { get; set; }
 }

@@ -34,7 +34,7 @@ public class UserController : Controller
     [AllowAnonymous]
     public string Register(RegistrationUserDTO registrationUserDto)
     {
-        _registrationService.RegisterUser(
+        var userId = _registrationService.RegisterUser(
             registrationUserDto.Login, 
             registrationUserDto.Password, 
             registrationUserDto.Email, 
@@ -43,7 +43,9 @@ public class UserController : Controller
             );
         var claims = new List<Claim>
         {
-            new(ClaimTypes.Name, registrationUserDto.Nick)
+            new(ClaimTypes.Name, registrationUserDto.Nick),
+            new("Id", userId.ToString()),
+            new("Age", registrationUserDto.Age.ToString())
         };
         var jwt = Autorize(claims);
         return jwt;

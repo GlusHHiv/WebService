@@ -56,6 +56,7 @@ public class MessageController : Controller
     [HttpPost]
     public void SendMessage([FromBody] SendMessageDTO sendMessageDto)
     {
-        _messengerService.SendMessage(sendMessageDto.GroupChatId, sendMessageDto.SenderId, sendMessageDto.Text);
+        var userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+        _messengerService.SendMessage(sendMessageDto.GroupChatId, userId, sendMessageDto.Text);
     }
 }

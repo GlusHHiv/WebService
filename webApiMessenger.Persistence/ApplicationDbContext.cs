@@ -10,6 +10,17 @@ public class ApplicationDbContext : DbContext, IDbContext
     public DbSet<GroupChat> GroupChats { get; set; }
     public DbSet<Message> Messages { get; set; }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Message>()
+            .HasMany(m => m.ReadedBy)
+            .WithMany(u => u.LastReadMessagesInGroupChat);
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.Sender)
+            .WithMany(u => u.SendMessages);
+        base.OnModelCreating(modelBuilder);
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlite("Data Source=webServiceMessenger.db");

@@ -49,4 +49,6 @@ public class User : BaseEntity
     /// Последнее прочитанное сообщения в группе
     /// </summary>
     public List<Message> LastReadMessagesInGroupChat { get; set; }
+
+    public List<Message> SendMessages { get; set; }
 }

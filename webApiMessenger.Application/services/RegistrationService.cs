@@ -12,7 +12,7 @@ public class RegistrationService
         _userRepository = userRepository;
     }
 
-    public void RegisterUser(string login, string password, string email, string nick, int age)
+    public int RegisterUser(string login, string password, string email, string nick, int age)
     {
         // ЯВЛЯЕТСЯ ПЛОХОЙ ПРАКТИКОЙ, ПОЛЬЗОВАТЕЛЬ КОТОРЫЙ ВЫЗВАЛ МЕТОД НЕ УЗНАЕТ КАКОЙ АРГУМЕНТ ЯВЛЯЕТСЯ NULL
         var validateStrings = new[] { login, password, email, nick };
@@ -28,5 +28,6 @@ public class RegistrationService
             Password = password
         };
         _userRepository.AddUser(newUser);
+        return newUser.Id;
     }
 }
