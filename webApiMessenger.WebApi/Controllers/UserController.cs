@@ -105,9 +105,10 @@ public class UserController : Controller
     }
 
     [HttpGet]
-    public IEnumerable<UserWithoutFriendsDTO> GetFriends(int id)
+    public IEnumerable<UserWithoutFriendsDTO> GetFriends()
     {
-        var userFriends = _userService.GetFriends(id);
+        var userId = int.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "Id").Value);
+        var userFriends = _userService.GetFriends(userId);
         return userFriends.Adapt<IEnumerable<UserWithoutFriendsDTO>>();
     }
 }

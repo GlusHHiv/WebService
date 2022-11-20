@@ -17,8 +17,13 @@ public class MessengerService
         _messageRepository.AddMessage(groupChatId, senderId, messageText);
     }
 
-    public IEnumerable<Message> GetMessagesFromGroupChat(int groupChatId)
+    public IEnumerable<Message> GetOldMessagesFromGroupChat(int groupChatId, int userId)
     {
-        return _messageRepository.GetMessagesFromGroupChat(groupChatId);
+        return _messageRepository.GetOldMessagesFromGroupChat(groupChatId, userId);
+    }
+    
+    public IEnumerable<Message> GetNewMessagesFromGroupChat(int groupChatId, int userId)
+    {
+        return _messageRepository.GetNewMessagesFromGroupChat(groupChatId, userId);
     }
 }

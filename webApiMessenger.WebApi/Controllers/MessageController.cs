@@ -17,14 +17,24 @@ public class MessageController : Controller
     {
         _messengerService = messengerService ?? throw new ArgumentNullException(nameof(messengerService));
     }
+
     
     [HttpGet]
-    public ActionResult<IEnumerable<MessageDTO>> GetMessages(int groupChatId)
+    public ActionResult<IEnumerable<GetMessagesDTO>> GetMessages(int groupChatId)
     {
-        var messages = _messengerService.GetMessagesFromGroupChat(groupChatId);
-        var dto = messages.Adapt<IEnumerable<MessageDTO>>();
+        var userId = int.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "Id").Value);
+        var oldMessages = _messengerService.GetOldMessagesFromGroupChat(groupChatId, userId);
+        var newMessages = _messengerService.GetNewMessagesFromGroupChat(groupChatId, userId);
         // Если пользователь не состоит в групп чате, отдаем Forbid()
         // return Forbid();
+
+        return Ok(new GetMessagesDTO
+        {
+            OldDTO = oldMessages.Adapt<IEnumerable<MessageDTO>>(),
+            NewDTO = newMessages.Adapt<IEnumerable<MessageDTO>>()
+        });
+        
+        
         
         
         // Пример как можно написать конфиг в текущем месте 
@@ -34,7 +44,8 @@ public class MessageController : Controller
         //         .Map(m => m.SenderNick, source => source.Sender.Nick)
         //         .Config
         //     );
-        return Ok(dto);
+        
+        
     }
     
     [HttpPost]
