@@ -15,12 +15,13 @@ public class GroupChatRepository
     
     public void AddGroupChat(int user1id, int user2id)
     {
-        var findUser1 = _dbContext.Users.FirstOrDefault(u => u.Id == user1id);
+        var findUser1 = _dbContext.Users.Include(user => user.Friends).FirstOrDefault(u => u.Id == user1id);
         var findUser2 = _dbContext.Users.FirstOrDefault(u => u.Id == user2id);
         
         if (findUser1 == null) throw new ArgumentException($"Пользователь с id {user1id} не существует!");
         if (findUser2 == null) throw new ArgumentException($"Пользователь с id {user2id} не существует!");
-        
+        if (findUser1.Friends.FirstOrDefault(f => f.Id == user2id) == null) 
+            throw new ArgumentException($"Пользователь с id {user2id} не является вашим другом!");
         var groupChat = new GroupChat();
         groupChat.Members = new List<User> {findUser1, findUser2};
         _dbContext.GroupChats.Add(groupChat);

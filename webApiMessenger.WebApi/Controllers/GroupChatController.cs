@@ -19,8 +19,9 @@ public class GroupChatController : Controller
     }
 
     [HttpPost]
-    public void CreateGroup(int user1id, int user2id)
+    public void CreateGroup(int user2id)
     {
+        var user1id = int.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "Id").Value);
         _groupService.CreateGroupChat(user1id, user2id);
     }
     
