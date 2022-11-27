@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using webApiMessenger.Domain;
 using webApiMessenger.Domain.Entities;
 
@@ -42,26 +43,21 @@ public class MessageRepository
         var groupChat = _dbContext.GroupChats
             .Include(g => g.Messages).FirstOrDefault(g => g.Id == groupChatId);
         var member = _dbContext.Users.Include(u => u.LastReadMessagesInGroupChat)
-            .FirstOrDefault(u => u.Id == memberId);
-        var lastReaded = member.LastReadMessagesInGroupChat.FirstOrDefault(m => m.GroupChat.Id == groupChatId );
-        
+            .Include(u => u.GroupChats).FirstOrDefault(u => u.Id == memberId);
         if (groupChat == null)
             throw new ArgumentException($"Группа с id {groupChatId} не существует!");
-        if (!groupChat.Members.Exists(m => m.Id == memberId)) 
-            throw new ArgumentException($"Пользователь с id {memberId} не состоит в группе с id {groupChatId}");
+        if (member == null)
+            throw new ArgumentException($"В группе с id {groupChatId} нет gjkmpjdfntkz!");
+        var lastReaded = member.LastReadMessagesInGroupChat.FirstOrDefault(m => m.GroupChat.Id == groupChatId );
+        
+        
         if (groupChat.Messages.Count == 0)
             throw new ArgumentException($"В группе с id {groupChatId} нет сообщений!");
         
         if (lastReaded == null)
         {
-            member.LastReadMessagesInGroupChat.Add(groupChat.Messages.Last());
-            _dbContext.SaveChanges();
             return new List<Message>();
         }
-        // FIXME: Ошибка в прочтнее сообщений
-        var index = member.LastReadMessagesInGroupChat.IndexOf(lastReaded);
-        member.LastReadMessagesInGroupChat[index] = groupChat.Messages.LastOrDefault();
-        _dbContext.SaveChanges();
 
         var messages = _dbContext.Messages.Include(m => m.Sender)
             .Where(m => ( m.SendDateTime <= lastReaded.SendDateTime && m.GroupChat.Id == groupChatId))
@@ -70,7 +66,6 @@ public class MessageRepository
         messages.Sort((x, y) => x.SendDateTime.CompareTo(y.SendDateTime));
         return messages;
     }
-    
     public IEnumerable<Message> GetNewMessagesFromGroupChat(int groupChatId, int memberId)
      {
          var groupChat = _dbContext.GroupChats
@@ -86,8 +81,6 @@ public class MessageRepository
          
          if (groupChat == null)
              throw new ArgumentException($"Группа с id {groupChatId} не существует!");
-         if (!groupChat.Members.Exists(m => m.Id == memberId))
-             throw new ArgumentException($"Пользователь с id {memberId} не состоит в группе с id {groupChatId}");
          if (groupChat.Messages.Count == 0)
              throw new ArgumentException($"В группе с id {groupChatId} нет сообщений!");
          

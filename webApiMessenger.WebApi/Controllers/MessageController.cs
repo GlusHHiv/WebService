@@ -30,27 +30,19 @@ public class MessageController : Controller
         
         var oldMessages = _messengerService.GetOldMessagesFromGroupChat(groupChatId, userId);
         var newMessages = _messengerService.GetNewMessagesFromGroupChat(groupChatId, userId);
-        // Если пользователь не состоит в групп чате, отдаем Forbid()
-        // return Forbid();
 
         return Ok(new GetMessagesDTO
         {
             OldMessages = oldMessages.Adapt<IEnumerable<MessageDTO>>(),
             NewMessages = newMessages.Adapt<IEnumerable<MessageDTO>>()
         });
-        
-        
-        
-        
+
         // Пример как можно написать конфиг в текущем месте 
         // messages.Adapt<IEnumerable<MessageDTO>>(
         //     new TypeAdapterConfig()
         //         .NewConfig<Message, MessageDTO>()
         //         .Map(m => m.SenderNick, source => source.Sender.Nick)
-        //         .Config
-        //     );
-        
-        
+        //         .Config);
     }
     
     [HttpPost]
