@@ -22,8 +22,26 @@ void PrintUsersFromDb()
 
 var anton = new User
 {
+    Id = 1,
     Name = "Anton"
 };
+
+var anton2 = new User
+{
+    Id = 1,
+    Name = "Anton"
+};
+
+var anton3 = anton;
+
+Console.WriteLine(anton == anton2);
+Console.WriteLine(anton == anton3);
+Console.WriteLine(anton.GetHashCode());
+Console.WriteLine(anton2.GetHashCode());
+Console.WriteLine(anton3.GetHashCode());
+
+
+Console.WriteLine(anton == anton2);
 
 var spb = new Publisher()
 {
