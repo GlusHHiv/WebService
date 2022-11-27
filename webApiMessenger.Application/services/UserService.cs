@@ -11,9 +11,9 @@ namespace webApiMessenger.Application.services
         {
             _userRepository = userRepository;
         }
-        public void AddFriend(int user1id, int user2id) 
+        public async Task AddFriend(int user1id, int user2id) 
         {
-            _userRepository.AddFriend(user1id, user2id);
+            await _userRepository.AddFriend(user1id, user2id);
         }
         
         public IEnumerable<User> GetUsers()

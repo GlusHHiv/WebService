@@ -10,4 +10,5 @@ public interface IDbContext
     DbSet<Message> Messages { get; set; }
 
     int SaveChanges();
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

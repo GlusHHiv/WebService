@@ -12,7 +12,7 @@ public class RegistrationService
         _userRepository = userRepository;
     }
 
-    public int RegisterUser(string login, string password, string email, string nick, int age)
+    public async Task<int> RegisterUser(string login, string password, string email, string nick, int age)
     {
         // ЯВЛЯЕТСЯ ПЛОХОЙ ПРАКТИКОЙ, ПОЛЬЗОВАТЕЛЬ КОТОРЫЙ ВЫЗВАЛ МЕТОД НЕ УЗНАЕТ КАКОЙ АРГУМЕНТ ЯВЛЯЕТСЯ NULL
         var validateStrings = new[] { login, password, email, nick };
@@ -27,7 +27,7 @@ public class RegistrationService
             Login = login,
             Password = password
         };
-        _userRepository.AddUser(newUser);
+        await _userRepository.AddUser(newUser);
         return newUser.Id;
     }
 }

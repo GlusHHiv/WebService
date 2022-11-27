@@ -25,17 +25,17 @@ public class UserController : Controller
     }
 
     [HttpPost]
-    public void AddFriend(int user2Id) 
+    public async Task AddFriend(int user2Id)
     { 
         var user1Id = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value);
-        _userService.AddFriend(user1Id, user2Id);
+        await _userService.AddFriend(user1Id, user2Id);
     }
     
     [HttpPost]
     [AllowAnonymous]
-    public string Register(RegistrationUserDTO registrationUserDto)
+    public async Task<string> Register(RegistrationUserDTO registrationUserDto)
     {
-        var userId = _registrationService.RegisterUser(
+        var userId = await _registrationService.RegisterUser(
             registrationUserDto.Login, 
             registrationUserDto.Password, 
             registrationUserDto.Email, 
