@@ -25,9 +25,10 @@ public class UserController : Controller
     }
 
     [HttpPost]
-    public void AddFriend(int user1id, int user2id) 
+    public void AddFriend(int user2Id) 
     { 
-        _userService.AddFriend(user1id, user2id);
+        var user1Id = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+        _userService.AddFriend(user1Id, user2Id);
     }
     
     [HttpPost]
