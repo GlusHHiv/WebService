@@ -36,6 +36,12 @@ public class GroupChatController : Controller
         _groupService.DeleteMember(groupChatId, removeUserId);
     }
 
+    [HttpDelete]
+    public void DeleteMeFormChat(int groupChatId)
+    {
+        var removeUserId = int.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "Id").Value);
+        _groupService.DeleteMember(groupChatId, removeUserId);
+    }
 
     [HttpGet]
     public IEnumerable<GroupChatDTO> GetGroupChats()
