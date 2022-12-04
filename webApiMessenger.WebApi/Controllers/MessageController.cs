@@ -22,14 +22,14 @@ public class MessageController : Controller
 
     
     [HttpGet]
-    public ActionResult<IEnumerable<GetMessagesDTO>> GetMessages(int groupChatId)
+    public async Task<ActionResult<IEnumerable<GetMessagesDTO>>> GetMessages(int groupChatId)
     {
         var userId = int.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "Id").Value);
         if (!_groupService.GroupChatContainUser(groupChatId, userId))
             return Forbid("Вы не можете получить сообщения группы в которой не состоите");
         
-        var oldMessages = _messengerService.GetOldMessagesFromGroupChat(groupChatId, userId);
-        var newMessages = _messengerService.GetNewMessagesFromGroupChat(groupChatId, userId);
+        var oldMessages =  await _messengerService.GetOldMessagesFromGroupChat(groupChatId, userId);
+        var newMessages = await _messengerService.GetNewMessagesFromGroupChat(groupChatId, userId);
 
         return Ok(new GetMessagesDTO
         {
@@ -46,9 +46,9 @@ public class MessageController : Controller
     }
     
     [HttpPost]
-    public void SendMessage([FromBody] SendMessageDTO sendMessageDto)
+    public async Task SendMessage([FromBody] SendMessageDTO sendMessageDto)
     {
         var userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value);
-        _messengerService.SendMessage(sendMessageDto.GroupChatId, userId, sendMessageDto.Text);
+        await _messengerService.SendMessage(sendMessageDto.GroupChatId, userId, sendMessageDto.Text);
     }
 }

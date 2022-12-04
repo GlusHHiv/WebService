@@ -14,21 +14,21 @@ public class MessageRepository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public void AddMessage(int groupChatId, int senderId, string messageText)
+    public async Task AddMessage(int groupChatId, int senderId, string messageText)
     {
         if (string.IsNullOrEmpty(messageText) || 
             string.IsNullOrWhiteSpace(messageText)) throw new ArgumentException("Текст сообщения не может быть пустым");
         
-        var groupChat = _dbContext.GroupChats.Include(g => g.Members).FirstOrDefault(g => g.Id == groupChatId);
+        var groupChat =  await _dbContext.GroupChats.Include(g => g.Members).FirstOrDefaultAsync(g => g.Id == groupChatId);
         if (groupChat == null) throw new ArgumentException($"Группа с id {groupChatId} не существует!");
 
-        var sender = _dbContext.Users.FirstOrDefault(u => u.Id == senderId);
+        var sender = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == senderId);
         if (sender == null) throw new ArgumentException($"Пользователь с id {senderId} не существует!");
 
         if (!groupChat.Members.Exists(m => m.Id == senderId)) 
             throw new ArgumentException($"Пользователь с id {senderId} не состоит в группе с id {groupChatId}");
         
-        _dbContext.Messages.Add(new Message
+        await _dbContext.Messages.AddAsync(new Message
         {
             Sender = sender,
             GroupChat = groupChat,
@@ -38,17 +38,17 @@ public class MessageRepository
     }
     
     
-    public IEnumerable<Message> GetOldMessagesFromGroupChat(int groupChatId, int memberId)
+    public async Task<IEnumerable<Message>> GetOldMessagesFromGroupChat(int groupChatId, int memberId)
     {
-        var groupChat = _dbContext.GroupChats
-            .Include(g => g.Messages).FirstOrDefault(g => g.Id == groupChatId);
-        var member = _dbContext.Users.Include(u => u.LastReadMessagesInGroupChat)
-            .Include(u => u.GroupChats).FirstOrDefault(u => u.Id == memberId);
+        var groupChat = await _dbContext.GroupChats
+            .Include(g => g.Messages).FirstOrDefaultAsync(g => g.Id == groupChatId);
+        var member = await _dbContext.Users.Include(u => u.LastReadMessagesInGroupChat)
+            .Include(u => u.GroupChats).FirstOrDefaultAsync(u => u.Id == memberId);
         if (groupChat == null)
             throw new ArgumentException($"Группа с id {groupChatId} не существует!");
         if (member == null)
             throw new ArgumentException($"В группе с id {groupChatId} нет gjkmpjdfntkz!");
-        var lastReaded = member.LastReadMessagesInGroupChat.FirstOrDefault(m => m.GroupChat.Id == groupChatId );
+        var lastReaded =  member.LastReadMessagesInGroupChat.FirstOrDefault(m => m.GroupChat.Id == groupChatId );
         
         
         if (groupChat.Messages.Count == 0)
@@ -66,15 +66,15 @@ public class MessageRepository
         messages.Sort((x, y) => x.SendDateTime.CompareTo(y.SendDateTime));
         return messages;
     }
-    public IEnumerable<Message> GetNewMessagesFromGroupChat(int groupChatId, int memberId)
+    public async Task<IEnumerable<Message>> GetNewMessagesFromGroupChat(int groupChatId, int memberId)
      {
-         var groupChat = _dbContext.GroupChats
+         var groupChat = await _dbContext.GroupChats
              .Include(g => g.Messages)
-             .FirstOrDefault(g => g.Id == groupChatId);
+             .FirstOrDefaultAsync(g => g.Id == groupChatId);
          
-         var member = _dbContext.Users
+         var member = await _dbContext.Users
              .Include(u => u.LastReadMessagesInGroupChat)
-             .FirstOrDefault(u => u.Id == memberId);
+             .FirstOrDefaultAsync(u => u.Id == memberId);
          
          var lastReaded = member.LastReadMessagesInGroupChat
              .FirstOrDefault(m => m.GroupChat.Id == groupChatId);
@@ -87,13 +87,13 @@ public class MessageRepository
          if (lastReaded == null)
          {
              member.LastReadMessagesInGroupChat.Add(groupChat.Messages.LastOrDefault());
-             _dbContext.SaveChanges();
+             await _dbContext.SaveChangesAsync();
              return groupChat.Messages;
          }
          
          var index = member.LastReadMessagesInGroupChat.IndexOf(lastReaded);
          member.LastReadMessagesInGroupChat[index] = groupChat.Messages.LastOrDefault();
-         _dbContext.SaveChanges();
+         await _dbContext.SaveChangesAsync();
          
          var messages = _dbContext.Messages.Include(m => m.Sender)
              .Where(m => DateTime.Compare(m.SendDateTime, lastReaded.SendDateTime) > 0 && m.GroupChat.Id == groupChatId)
