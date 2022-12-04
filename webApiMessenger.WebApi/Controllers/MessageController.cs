@@ -25,7 +25,7 @@ public class MessageController : Controller
     public async Task<ActionResult<IEnumerable<GetMessagesDTO>>> GetMessages(int groupChatId)
     {
         var userId = int.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "Id").Value);
-        if (!_groupService.GroupChatContainUser(groupChatId, userId))
+        if (! await _groupService.GroupChatContainUser(groupChatId, userId))
             return Forbid("Вы не можете получить сообщения группы в которой не состоите");
         
         var oldMessages =  await _messengerService.GetOldMessagesFromGroupChat(groupChatId, userId);
