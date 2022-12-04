@@ -13,28 +13,28 @@ public class GroupService
         _groupChatRepository = groupChatRepository;
     }
 
-    public void CreateGroupChat(int user1id, int user2id)
+    public async Task CreateGroupChat(int user1id, int user2id)
     {
-        _groupChatRepository.AddGroupChat(user1id, user2id);
+        await _groupChatRepository.AddGroupChat(user1id, user2id);
     }
 
-    public void AddMember(int groupChatid, int user1id)
+    public async Task AddMember(int groupChatid, int user1id)
     {
-        _groupChatRepository.AddMember(groupChatid, user1id);
+        await _groupChatRepository.AddMember(groupChatid, user1id);
     }
     
-    public void DeleteMember(int groupChatId, int removeUserId)
+    public async Task DeleteMember(int groupChatId, int removeUserId)
     {
-        _groupChatRepository.DeleteMemberAndTryDeleteGroupChat(groupChatId, removeUserId);
+        await _groupChatRepository.DeleteMemberAndTryDeleteGroupChat(groupChatId, removeUserId);
     }
     
-    public IEnumerable<GroupChat> GetGroupChats()
+    public async Task<IEnumerable<GroupChat>> GetGroupChats()
     {
-        return _groupChatRepository.GetGroupChats();
+        return await _groupChatRepository.GetGroupChats();
     }
 
-    public bool GroupChatContainUser(int groupChatId, int userId)
+    public async Task<bool> GroupChatContainUser(int groupChatId, int userId)
     {
-        return _groupChatRepository.GroupChatContainUser(groupChatId, userId);
+        return await _groupChatRepository.GroupChatContainUser(groupChatId, userId);
     }
 }

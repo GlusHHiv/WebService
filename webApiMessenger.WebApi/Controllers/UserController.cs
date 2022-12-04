@@ -67,10 +67,10 @@ public class UserController : Controller
 
     [HttpPost]
     [AllowAnonymous]
-    public IActionResult Login(LoginDTO loginDto)
+    public async Task <IActionResult> Login(LoginDTO loginDto)
     {
-        var user = _userService.GetUsers()
-            .FirstOrDefault(
+        var users = await _userService.GetUsers();
+        var user = users.FirstOrDefault(
                 u => u.Login == loginDto.Login && 
                      u.Password == loginDto.Password);
 
@@ -101,17 +101,17 @@ public class UserController : Controller
     }
 
     [HttpGet]
-    public IEnumerable<UserWithoutFriendsDTO> GetUsers()
+    public async Task<IEnumerable<UserWithoutFriendsDTO>> GetUsers()
     {
-        var users = _userService.GetUsers();
+        var users = await _userService.GetUsers();
         return users.Adapt<IEnumerable<UserWithoutFriendsDTO>>();
     }
 
     [HttpGet]
-    public IEnumerable<UserWithoutFriendsDTO> GetFriends()
+    public async Task<IEnumerable<UserWithoutFriendsDTO>> GetFriends()
     {
         var userId = int.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "Id").Value);
-        var userFriends = _userService.GetFriends(userId);
+        var userFriends = await _userService.GetFriends(userId);
         return userFriends.Adapt<IEnumerable<UserWithoutFriendsDTO>>();
     }
 }
