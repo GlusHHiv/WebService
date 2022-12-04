@@ -38,14 +38,14 @@ public class UserRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public List<User> GetUsers()
+    public async  Task<List<User>> GetUsers()
     {
-        return _dbContext.Users.AsNoTracking().ToList();
+        return await _dbContext.Users.AsNoTracking().ToListAsync();
     }
 
-    public IEnumerable<User> GetFriends(int id)
+    public async Task<IEnumerable<User>> GetFriends(int id)
     {
-        var user = _dbContext.Users.Include(u => u.Friends).FirstOrDefault(u => u.Id == id);
+        var user = await _dbContext.Users.Include(u => u.Friends).FirstOrDefaultAsync(u => u.Id == id);
         if (user == null) throw new ArgumentException($"Пользователь с id {id} не существует!");
         
         return user.Friends;

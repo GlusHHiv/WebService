@@ -16,14 +16,14 @@ namespace webApiMessenger.Application.services
             await _userRepository.AddFriend(user1id, user2id);
         }
         
-        public IEnumerable<User> GetUsers()
+        public async Task<IEnumerable<User>> GetUsers()
         {
-            return _userRepository.GetUsers();
+            return await _userRepository.GetUsers();
         }
 
-        public IEnumerable<User> GetFriends(int id)
+        public async Task<IEnumerable<User>> GetFriends(int id)
         {
-            return _userRepository.GetFriends(id);
+            return await _userRepository.GetFriends(id);
         }
     }
 }

@@ -26,28 +26,28 @@ public class GroupChatController : Controller
     }
     
     [HttpPost]
-    public void AddMember(int groupChatid, int user1id)
+    public async Task AddMember(int groupChatid, int user1id)
     {
-        _groupService.AddMember(groupChatid, user1id);
+        await _groupService.AddMember(groupChatid, user1id);
     }
     
     [HttpDelete]
-    public void DeleteMember(int groupChatId, int removeUserId)
+    public async Task DeleteMember(int groupChatId, int removeUserId)
     {
-        _groupService.DeleteMember(groupChatId, removeUserId);
+        await _groupService.DeleteMember(groupChatId, removeUserId);
     }
 
     [HttpDelete]
-    public void DeleteMeFormChat(int groupChatId)
+    public async Task DeleteMeFormChat(int groupChatId)
     {
         var removeUserId = int.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "Id").Value);
-        _groupService.DeleteMember(groupChatId, removeUserId);
+        await _groupService.DeleteMember(groupChatId, removeUserId);
     }
 
     [HttpGet]
-    public IEnumerable<GroupChatDTO> GetGroupChats()
+    public async Task<IEnumerable<GroupChatDTO>> GetGroupChats()
     {
-        var groupChats = _groupService.GetGroupChats();
+        var groupChats = await _groupService.GetGroupChats();
         
         // Ручками
         // var groupChatDTOs = new List<GroupChatDTO>();
