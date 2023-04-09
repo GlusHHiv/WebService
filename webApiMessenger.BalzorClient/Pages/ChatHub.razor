@@ -1,0 +1,88 @@
+﻿@page "/chat"
+@using Microsoft.AspNetCore.SignalR.Client
+<h3>ChatHub</h3>
+
+<div class="card">
+    <div><input type="text" @bind-value="@Name" /><button @onclick="SayHello">Send</button></div>
+    <span>Message: @SayHelloMessage</span>
+</div>
+
+<div class="card">
+    <div><input type="text" @bind-value="@GroupChatId" /><button @onclick="JoinToGroup">Join</button></div>
+    <span>GroupId: @GroupChatId</span>
+</div>
+
+<div class="card">
+    <span>ConnectionId: @Connection?.ConnectionId</span>
+    <span>State: @Connection?.State</span>
+</div>
+
+<div class="card m-2">
+    <div class="p-3 h-50">
+        @foreach (var message in _messages)
+        {
+            <div>
+                <span>@message</span>
+            </div>
+        }
+    </div>
+    <div class="d-flex">
+        <input class="flex-grow-1" type="text" @bind-value="@Message" />
+        <button @onclick="SendMessage">Send</button>
+    </div>
+</div>
+
+@code {
+    private List<string> _messages = new List<string>();
+    public string Message { get; set; } = string.Empty;
+
+    public string? SayHelloMessage { get; set; }
+    public string? Name { get; set; }
+
+    public HubConnection? Connection { get; set; }
+    public string? GroupChatId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Connection = new HubConnectionBuilder().WithUrl("http://localhost:5288/chathub").Build();
+        Connection.On<string>("ReceiveSayHello", sayHelloMessage =>
+        {
+            SayHelloMessage = sayHelloMessage;
+            StateHasChanged();
+        });
+        Connection.On<string>("ReceiveMessage", message =>
+        {
+            _messages.Add(message);
+            StateHasChanged();
+        });
+
+        await Connection.StartAsync();
+        await Connection.SendAsync("SayHello", "World");
+        await base.OnInitializedAsync();
+    }
+
+    public async void SayHello()
+    {
+        await Connection?.SendAsync("SayHello", Name);
+    }
+
+    public async void SendMessage()
+    {
+        if (!string.IsNullOrEmpty(Message) && !string.IsNullOrEmpty(GroupChatId))
+        {
+            await Connection?.SendAsync("SendMessage", GroupChatId, Message);
+            _messages.Add(Message);
+            Message = string.Empty;
+        }
+
+    }
+
+    private async Task JoinToGroup()
+    {
+        if (GroupChatId != null)
+        {
+            await Connection.SendAsync("Join", GroupChatId);
+        }
+    }
+
+}

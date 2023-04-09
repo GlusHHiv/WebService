@@ -1,11 +1,13 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using webApiMessenger.Application.services;
 using webApiMessenger.Domain;
 using webApiMessenger.Persistence;
 using webApiMessenger.Persistence.Repositories;
+using webApiMessenger.WebApi.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,9 +70,25 @@ builder.Services
             ValidateIssuerSigningKey = true
         };
     });
+builder.Services.AddSignalR();
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
+});
+builder.Services.AddCors(x =>
+    x.AddDefaultPolicy(
+        policyBuilder => policyBuilder
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowAnyOrigin()
+        )
+    );
 
 var app = builder.Build();
 
+app.UseCors();
+app.UseResponseCompression();
 app.UseAuthentication();
 
 // Configure the HTTP request pipeline.
@@ -85,5 +103,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapHub<ChatHub>("/chathub");
 app.Run();
