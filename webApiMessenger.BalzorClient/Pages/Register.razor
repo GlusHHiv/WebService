@@ -1,0 +1,36 @@
+﻿@page "/register"
+@using Microsoft.AspNetCore.SignalR.Client
+<PageTitle>Counter</PageTitle>
+
+<h4>Registeration</h4>
+
+<div class="card">
+    <div><input type="text" @bind-value="@Nick" />
+        <input type="text" @bind-value="@Email" />
+        <input type="text" @bind-value="@Login" />
+        <input type="text" @bind-value="@Password" />
+        <input type="text" @bind-value="@Age" />
+        <button @onclick="Register">Send</button></div>
+    <span>Message: @RegisterResult</span>
+</div>
+
+@code {
+    public string? RegisterResult { get; set; }
+    public string? Nick { get; set; }
+    public string? Email { get; set; }
+    public string? Login { get; set; }
+    public string? Password { get; set; }
+    public string? Age { get; set; }
+    
+    public HubConnection? Connection { get; set; }
+    
+    public async Task Registration()
+    {
+        if (Nick != null & Email != null & Login != null & Password != null & Age != null  )
+        {
+            await Connection.SendAsync("Register", Nick, Email, Login, Password, Age);
+        }
+
+    }
+
+}

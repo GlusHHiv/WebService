@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using webApiMessenger.Application.services;
 
+
 namespace webApiMessenger.WebApi.Hubs;
 // TODO: авторизация
 public class ChatHub : Hub
@@ -36,6 +37,12 @@ public class ChatHub : Hub
         await Groups.AddToGroupAsync(Context.ConnectionId, groupChatId);
         await Clients.OthersInGroup(groupChatId).SendAsync("ReceiveMessage", "Новый пользователь в группе");
         _logger.LogInformation("Добавили в группу {groupChatId}", groupChatId);
+    }
+    
+    public async Task Register(string Nick, string Email, string Login, string Password, string Age)
+    {
+        await 
+        _logger.LogInformation("Добавили нового пользователя {Nick}", Nick);
     }
 
     public async Task SayHello(string name)
