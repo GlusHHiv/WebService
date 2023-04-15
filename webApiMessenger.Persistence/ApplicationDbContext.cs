@@ -10,6 +10,11 @@ public class ApplicationDbContext : DbContext, IDbContext
     public DbSet<GroupChat> GroupChats { get; set; }
     public DbSet<Message> Messages { get; set; }
 
+    public ApplicationDbContext(DbContextOptions options) : base(options) 
+    {
+        
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Message>()
@@ -23,7 +28,6 @@ public class ApplicationDbContext : DbContext, IDbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Data Source=webServiceMessenger.db");
         base.OnConfiguring(optionsBuilder);
     }
     

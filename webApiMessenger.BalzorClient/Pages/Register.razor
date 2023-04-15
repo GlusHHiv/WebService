@@ -1,17 +1,40 @@
 ﻿@page "/register"
-@using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.Extensions.Options
+@using webApiMessenger.BalzorClient.Options
+@using System.Net.Http.Headers
+@using webApiMessenger.Shared.DTOs
+@inject IOptions<ServerSettings> Options
 <PageTitle>Counter</PageTitle>
 
 <h4>Registeration</h4>
 
 <div class="card">
-    <div><input type="text" @bind-value="@Nick" />
-        <input type="text" @bind-value="@Email" />
-        <input type="text" @bind-value="@Login" />
-        <input type="text" @bind-value="@Password" />
-        <input type="text" @bind-value="@Age" />
-        <button @onclick="Register">Send</button></div>
-    <span>Message: @RegisterResult</span>
+    <div>
+        <input type="text" @bind-value="@Nick"/>
+        <input type="text" @bind-value="@Email"/>
+        <input type="text" @bind-value="@Login"/>
+        <input type="text" @bind-value="@Password"/>
+        <input type="number" @bind-value="@Age"/>
+        <button @onclick="Registration">Send</button>
+    </div>
+    <p>Message: @RegisterResult</p>
+    <div class="card">
+        <p>Schema: @ServerSettings.Schema</p>
+        <p>Host: @ServerSettings.Host</p>
+        <p>Port: @ServerSettings.Port</p>
+        <p>BaseUrl: @ServerSettings.BaseUrl</p>
+    </div>
+    
+    <div class="card mt-3">
+        <div class="card-body">
+            <p>Id: @_user?.Id</p>
+            <p>Nick: @_user?.Nick</p>
+            <p>Age: @_user?.Age</p>
+        </div>
+        <div class="card-footer">
+            <button @onclick="Me">ME</button>
+        </div>
+    </div>
 </div>
 
 @code {
@@ -20,17 +43,39 @@
     public string? Email { get; set; }
     public string? Login { get; set; }
     public string? Password { get; set; }
-    public string? Age { get; set; }
-    
-    public HubConnection? Connection { get; set; }
-    
+    public int? Age { get; set; }
+    private ServerSettings ServerSettings;
+    private HttpClient _client;
+    private UserWithoutFriendsDTO? _user;
+
+    protected override Task OnInitializedAsync()
+    {
+        ServerSettings = Options.Value;
+        _client = new HttpClient();
+        _client.BaseAddress = ServerSettings.Uri;
+        return base.OnInitializedAsync();
+    }
+
     public async Task Registration()
     {
         if (Nick != null & Email != null & Login != null & Password != null & Age != null  )
         {
-            await Connection.SendAsync("Register", Nick, Email, Login, Password, Age);
+            var response = await _client.PostAsJsonAsync("User/Register", new
+            {
+                Nick, Email, Login, Password, Age
+            });
+            if (response.IsSuccessStatusCode)
+            {
+                var jwt = await response.Content.ReadAsStringAsync();
+                RegisterResult = jwt;
+                // _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
+                _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {jwt}");
+            }
         }
-
     }
 
+    public async Task Me()
+    {
+        _user = await _client.GetFromJsonAsync<UserWithoutFriendsDTO>("User/Me");
+    }
 }

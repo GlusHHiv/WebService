@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using webApiMessenger.Application.services;
-using webApiMessenger.WebApi.DTOs;
+using webApiMessenger.Shared.DTOs;
 
 namespace webApiMessenger.WebApi.Controllers;
 

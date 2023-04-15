@@ -4,6 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>75de5b49-7660-4911-b117-87392c895f9a</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,16 +15,20 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="7.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\webApiMessenger.Application\webApiMessenger.Application.csproj" />
       <ProjectReference Include="..\webApiMessenger.Persistence\webApiMessenger.Persistence.csproj" />
+      <ProjectReference Include="..\webApiMessenger.Shared\webApiMessenger.Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Hubs\" />
+      <Folder Include="Services\" />
     </ItemGroup>
 
 </Project>

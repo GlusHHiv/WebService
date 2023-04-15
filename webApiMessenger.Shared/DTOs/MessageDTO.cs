@@ -1,4 +1,4 @@
-﻿namespace webApiMessenger.WebApi.DTOs;
+﻿namespace webApiMessenger.Shared.DTOs;
 
 public class MessageDTO
 {

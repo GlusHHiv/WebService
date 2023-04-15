@@ -50,4 +50,9 @@ public class UserRepository
         
         return user.Friends;
     }
+
+    public async Task<User?> GetByLogin(string login)
+    {
+        return await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Login == login);
+    }
 }

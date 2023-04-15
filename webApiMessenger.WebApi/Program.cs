@@ -1,15 +1,23 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using webApiMessenger.Application.services;
 using webApiMessenger.Domain;
+using webApiMessenger.Domain.Abstractions;
 using webApiMessenger.Persistence;
 using webApiMessenger.Persistence.Repositories;
 using webApiMessenger.WebApi.Hubs;
+using webApiMessenger.WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddOptions<JwtSettings>()
+    .Bind(builder.Configuration.GetSection(JwtSettings.ConfigName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 // Add services to the container.
 
@@ -43,7 +51,8 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddScoped<IDbContext, ApplicationDbContext>();
+builder.Services.AddDbContext<IDbContext, ApplicationDbContext>(options => 
+    options.UseSqlite(builder.Configuration.GetConnectionString("DbConnectionString")));
 
 builder.Services.AddScoped<GroupService>();
 builder.Services.AddScoped<RegistrationService>();
@@ -53,20 +62,23 @@ builder.Services.AddScoped<MessengerService>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<MessageRepository>();
 builder.Services.AddScoped<GroupChatRepository>();
+builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 
 // builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        JwtSettings jwtSettings = new JwtSettings();
+        builder.Configuration.GetSection(JwtSettings.ConfigName).Bind(jwtSettings);
         options.TokenValidationParameters = new TokenValidationParameters()
         {
             ValidateIssuer = true,
-            ValidIssuer = "WebMessangerApp",
+            ValidIssuer = jwtSettings.ValidIssuer,
             ValidateAudience = true,
-            ValidAudience = "Client",
+            ValidAudience = jwtSettings.ValidAudience,
             ValidateLifetime = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("78EFAA44-6515-4FCD-87DF-50A0D737D41D")),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.IssuerSigningKey)),
             ValidateIssuerSigningKey = true
         };
     });

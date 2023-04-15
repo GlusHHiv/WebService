@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using webApiMessenger.Application.services;
-using webApiMessenger.WebApi.DTOs;
+using webApiMessenger.Domain.Abstractions;
+using webApiMessenger.Domain.Entities;
+using webApiMessenger.Shared.DTOs;
+
 
 namespace webApiMessenger.WebApi.Controllers;
 
@@ -16,12 +19,14 @@ namespace webApiMessenger.WebApi.Controllers;
 public class UserController : Controller
 {
     private UserService _userService;
-    private RegistrationService _registrationService; 
+    private RegistrationService _registrationService;
+    private readonly ITokenProvider _tokenProvider;
 
-    public UserController(UserService userService, RegistrationService registrationService)
+    public UserController(UserService userService, RegistrationService registrationService, ITokenProvider tokenProvider)
     {
         _userService = userService;
         _registrationService = registrationService;
+        _tokenProvider = tokenProvider;
     }
 
     [HttpPost]
@@ -42,32 +47,13 @@ public class UserController : Controller
             registrationUserDto.Nick, 
             registrationUserDto.Age
             );
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.Name, registrationUserDto.Nick),
-            new("Id", userId.ToString()),
-            new("Age", registrationUserDto.Age.ToString())
-        };
-        var jwt = Autorize(claims);
+        var jwt = await _tokenProvider.GetJwt(registrationUserDto.Login);
         return jwt;
-    }
-
-    private string Autorize(List<Claim> claims)
-    {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("78EFAA44-6515-4FCD-87DF-50A0D737D41D"));
-        var jwt = new JwtSecurityToken(
-            claims: claims,
-            issuer: "WebMessangerApp",
-            audience: "Client",
-            expires: DateTime.UtcNow.Add(TimeSpan.FromDays(7)),
-            signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
-
-        return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 
     [HttpPost]
     [AllowAnonymous]
-    public async Task <IActionResult> Login(LoginDTO loginDto)
+    public async Task<IActionResult> Login(LoginDTO loginDto)
     {
         var users = await _userService.GetUsers();
         var user = users.FirstOrDefault(
@@ -75,14 +61,8 @@ public class UserController : Controller
                      u.Password == loginDto.Password);
 
         if (user == null) return Unauthorized();
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.Name, user.Nick), 
-            new("Id", user.Id.ToString()),
-            new("Age", user.Age.ToString())
-        };
-        var token = Autorize(claims);
-        return Ok(Results.Json(new {token}));
+        var jwt = await _tokenProvider.GetJwt(user.Login);
+        return Ok(jwt);
     }
 
     [HttpGet]
