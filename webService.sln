@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ivan.GL", "Ivan.GL\Ivan.GL.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webApiMessenger.BalzorClient", "webApiMessenger.BalzorClient\webApiMessenger.BalzorClient.csproj", "{540DAA5F-CA15-4475-A360-074AFF12EE75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webApiMessenger.Shared", "webApiMessenger.Shared\webApiMessenger.Shared.csproj", "{1D5B3ED5-6F7B-4021-87A7-68A39A14F8F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webApiMessenger.Shared", "webApiMessenger.Shared\webApiMessenger.Shared.csproj", "{1D5B3ED5-6F7B-4021-87A7-68A39A14F8F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

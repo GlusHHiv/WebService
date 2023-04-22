@@ -1,7 +1,12 @@
 @page "/login"
 @using Microsoft.Extensions.Options
 @using webApiMessenger.BalzorClient.Options
+@using Blazored.LocalStorage
+@using Blazored.SessionStorage
 @inject IOptions<ServerSettings> Options
+@inject ILocalStorageService LocalStorage
+@inject ISessionStorageService SessionStorage
+@inject NavigationManager NavigationManager
 <PageTitle>Login</PageTitle>
 
 <h1>Login</h1>
@@ -10,6 +15,7 @@
     <div>
         <div><p>Login:</p><input type="text" @bind-value="@Login"/></div>
         <div><p>Password:</p><input type="text" @bind-value="@Password"/></div>
+        <div><p>Запомнить меня?</p><input type="checkbox" @bind-value="@SaveMe"/></div>
         <button @onclick="Logining">Login</button>
     </div>
     <p>Message: @LoginResult</p>
@@ -19,6 +25,7 @@
     public string? LoginResult { get; set; }
     public string? Login { get; set; }
     public string? Password { get; set; }
+    public bool SaveMe { get; set; }
     private ServerSettings ServerSettings;
     private HttpClient _client;
 
@@ -44,9 +51,17 @@
                 var jwt = await response.Content.ReadAsStringAsync();
                 LoginResult = jwt;
                 _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {jwt}");
+                if (SaveMe)
+                {
+                    await LocalStorage.SetItemAsStringAsync("jwt", jwt);
+                }
+                else
+                {
+                    await SessionStorage.SetItemAsStringAsync("jwt", jwt);
+                }
+                
+                NavigationManager.NavigateTo("/chat", forceLoad: true);
             }
         }
     }
-
-
 }

@@ -1,4 +1,10 @@
-﻿@inherits LayoutComponentBase
+﻿@using Blazored.LocalStorage
+@using Blazored.SessionStorage
+@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
+@inject ISessionStorageService SessionStorage
 
 <div class="page">
     <div class="sidebar">
@@ -7,7 +13,18 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+            <AuthorizeView>
+                <NotAuthorized>
+                    <NavLink href="/login">SignIn</NavLink>
+                    <NavLink href="/register">SingUp</NavLink>
+                </NotAuthorized>
+                <Authorized>
+                    <span>@_authenticationState?.User?.Identity?.Name</span>
+                    <button class="btn btn-outline-danger ms-3" @onclick="LogOut">
+                        Log out
+                    </button>
+                </Authorized>
+            </AuthorizeView>
         </div>
 
         <article class="content px-4">
@@ -15,3 +32,21 @@
         </article>
     </main>
 </div>
+
+@code
+{
+    private AuthenticationState? _authenticationState = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task LogOut()
+    {
+        await LocalStorage.ClearAsync();
+        await SessionStorage.ClearAsync();
+        NavigationManager.NavigateTo("/");
+    }
+}

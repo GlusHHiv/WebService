@@ -1,9 +1,11 @@
 ﻿@page "/register"
 @using Microsoft.Extensions.Options
 @using webApiMessenger.BalzorClient.Options
-@using System.Net.Http.Headers
 @using webApiMessenger.Shared.DTOs
+@using Blazored.LocalStorage
+@using System.Net.Http.Headers
 @inject IOptions<ServerSettings> Options
+@inject ILocalStorageService LocalStorage
 <PageTitle>Registeration</PageTitle>
 
 <h4>Registeration</h4>
@@ -52,6 +54,7 @@
         ServerSettings = Options.Value;
         _client = new HttpClient();
         _client.BaseAddress = ServerSettings.Uri;
+    // _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
         return base.OnInitializedAsync();
     }
 
@@ -69,6 +72,7 @@
                 RegisterResult = jwt;
                 // _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
                 _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {jwt}");
+                await LocalStorage.SetItemAsStringAsync("jwt", jwt);
             }
         }
     }
