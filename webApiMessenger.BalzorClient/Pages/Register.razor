@@ -4,18 +4,18 @@
 @using System.Net.Http.Headers
 @using webApiMessenger.Shared.DTOs
 @inject IOptions<ServerSettings> Options
-<PageTitle>Counter</PageTitle>
+<PageTitle>Registeration</PageTitle>
 
 <h4>Registeration</h4>
 
 <div class="card">
     <div>
-        <input type="text" @bind-value="@Nick"/>
-        <input type="text" @bind-value="@Email"/>
-        <input type="text" @bind-value="@Login"/>
-        <input type="text" @bind-value="@Password"/>
-        <input type="number" @bind-value="@Age"/>
-        <button @onclick="Registration">Send</button>
+        <div><p>Nick:</p><input type="text" @bind-value="@Nick"/></div>
+        <div><p>Email:</p><input type="text" @bind-value="@Email"/></div>
+        <div><p>Login:</p><input type="text" @bind-value="@Login"/></div>
+        <div><p>Password:</p><input type="text" @bind-value="@Password"/></div>
+        <div><p>Age:</p><input type="number" @bind-value="@Age"/></div>
+        <button @onclick="Registration">Register</button>
     </div>
     <p>Message: @RegisterResult</p>
     <div class="card">
@@ -24,7 +24,6 @@
         <p>Port: @ServerSettings.Port</p>
         <p>BaseUrl: @ServerSettings.BaseUrl</p>
     </div>
-    
     <div class="card mt-3">
         <div class="card-body">
             <p>Id: @_user?.Id</p>

@@ -1,0 +1,52 @@
+@page "/login"
+@using Microsoft.Extensions.Options
+@using webApiMessenger.BalzorClient.Options
+@inject IOptions<ServerSettings> Options
+<PageTitle>Login</PageTitle>
+
+<h1>Login</h1>
+
+<div class="card">
+    <div>
+        <div><p>Login:</p><input type="text" @bind-value="@Login"/></div>
+        <div><p>Password:</p><input type="text" @bind-value="@Password"/></div>
+        <button @onclick="Logining">Login</button>
+    </div>
+    <p>Message: @LoginResult</p>
+</div>
+
+@code {
+    public string? LoginResult { get; set; }
+    public string? Login { get; set; }
+    public string? Password { get; set; }
+    private ServerSettings ServerSettings;
+    private HttpClient _client;
+
+
+    protected override Task OnInitializedAsync()
+    {
+        ServerSettings = Options.Value;
+        _client = new HttpClient();
+        _client.BaseAddress = ServerSettings.Uri;
+        return base.OnInitializedAsync();
+    }
+
+    public async Task Logining()
+    {
+        if (Login != null & Password != null)
+        {
+            var response = await _client.PostAsJsonAsync("User/Login", new
+            {
+                 Login, Password
+            });
+            if (response.IsSuccessStatusCode)
+            {
+                var jwt = await response.Content.ReadAsStringAsync();
+                LoginResult = jwt;
+                _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {jwt}");
+            }
+        }
+    }
+
+
+}
