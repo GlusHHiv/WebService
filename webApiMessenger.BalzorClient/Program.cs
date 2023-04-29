@@ -18,7 +18,9 @@ builder.Services.AddBlazoredLocalStorageAsSingleton();
 
 builder.Services.AddSingleton<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddAuthorizationCore();
-
+builder.Services.AddSingleton<HttpClientFactory>();
+builder.Services.AddSingleton<SignInOrUpService>();
+builder.Services.AddSingleton<UserService>();
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 

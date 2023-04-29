@@ -1,11 +1,9 @@
 ﻿@page "/register"
-@using Microsoft.Extensions.Options
-@using webApiMessenger.BalzorClient.Options
-@using webApiMessenger.Shared.DTOs
-@using Blazored.LocalStorage
 @using System.Net.Http.Headers
-@inject IOptions<ServerSettings> Options
+@inject IOptions<ServerSettings> ServerSettingsOptions
 @inject ILocalStorageService LocalStorage
+@inject HttpClientFactory HttpClientFactory
+@inject SignInOrUpService SignInOrUpService
 <PageTitle>Registeration</PageTitle>
 
 <h4>Registeration</h4>
@@ -21,10 +19,10 @@
     </div>
     <p>Message: @RegisterResult</p>
     <div class="card">
-        <p>Schema: @ServerSettings.Schema</p>
-        <p>Host: @ServerSettings.Host</p>
-        <p>Port: @ServerSettings.Port</p>
-        <p>BaseUrl: @ServerSettings.BaseUrl</p>
+        <p>Schema: @_serverSettings.Schema</p>
+        <p>Host: @_serverSettings.Host</p>
+        <p>Port: @_serverSettings.Port</p>
+        <p>BaseUrl: @_serverSettings.BaseUrl</p>
     </div>
     <div class="card mt-3">
         <div class="card-body">
@@ -47,23 +45,22 @@
     public string? Login { get; set; }
     public string? Password { get; set; }
     public int? Age { get; set; }
-    private ServerSettings ServerSettings;
+    private ServerSettings _serverSettings;
     private HttpClient _client;
     private UserPublicDTO? _user;
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        ServerSettings = Options.Value;
-        _client = new HttpClient();
-        _client.BaseAddress = ServerSettings.Uri;
-    // _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
-        return base.OnInitializedAsync();
+        _serverSettings = ServerSettingsOptions.Value;
+        _client = await HttpClientFactory.CreateHttpClientAsync();
+        await base.OnInitializedAsync();
     }
 
     public async Task Registration()
     {
         if (Nick != null & Email != null & Login != null & Password != null & Age != null  )
         {
+            // await SignInOrUpService.SignUp();
             var response = await _client.PostAsJsonAsync("User/Register", new
             {
                 Nick, Email, Login, Password, Age
@@ -72,8 +69,7 @@
             {
                 var jwt = await response.Content.ReadAsStringAsync();
                 RegisterResult = jwt;
-                // _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
-                _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {jwt}");
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
                 await LocalStorage.SetItemAsStringAsync("jwt", jwt);
             }
         }

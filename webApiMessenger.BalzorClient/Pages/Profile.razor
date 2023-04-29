@@ -1,13 +1,5 @@
 @page "/profile"
-@using Blazored.LocalStorage
-@using Blazored.SessionStorage
-@using webApiMessenger.Shared.DTOs
-@using System.Text.Json
-@using Microsoft.Extensions.Options
-@using webApiMessenger.BalzorClient.Options
-@inject IOptions<ServerSettings> Options
-@inject ILocalStorageService LocalStorage
-@inject ISessionStorageService SessionStorage
+@inject UserService UserService
 @inherits LayoutComponentBase
 
 <PageTitle>Profile</PageTitle>
@@ -30,26 +22,12 @@
 
     private HttpClient _client;
     private UserPublicDTO? _user;
-    public IEnumerable<UserWithoutFriendsDTO> friends;
-    public string? jwt;
-    
+    public IEnumerable<UserWithoutFriendsDTO>? friends;
+
     protected override async Task OnInitializedAsync()
     {
-        
-        if (await LocalStorage.ContainKeyAsync("jwt"))
-        {
-            jwt = await LocalStorage.GetItemAsStringAsync("jwt");
-        }
-        else
-        {
-            jwt = await SessionStorage.GetItemAsStringAsync("jwt");
-        }
-        _client = new HttpClient();
-        _client.BaseAddress = Options.Value.Uri;
-        _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {jwt}");
-        _user = await _client.GetFromJsonAsync<UserPublicDTO>("User/Me");
-        friends = await _client.GetFromJsonAsync<IEnumerable<UserWithoutFriendsDTO>>("User/GetFriends");
-
+        _user = await UserService.Me();
+        friends = await UserService.GetFriends();
     }
 
 }

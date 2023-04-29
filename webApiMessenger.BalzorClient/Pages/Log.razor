@@ -1,12 +1,9 @@
 @page "/login"
-@using Microsoft.Extensions.Options
-@using webApiMessenger.BalzorClient.Options
-@using Blazored.LocalStorage
 @using Blazored.SessionStorage
-@inject IOptions<ServerSettings> Options
 @inject ILocalStorageService LocalStorage
 @inject ISessionStorageService SessionStorage
 @inject NavigationManager NavigationManager
+@inject SignInOrUpService SignInOrUpService
 <PageTitle>Login</PageTitle>
 
 <h1>Login</h1>
@@ -21,47 +18,30 @@
     <p>Message: @LoginResult</p>
 </div>
 
+@if (LoginResult == null)
+{
+    <div class="alert alert-danger">
+        Не смогли авторизоваться
+    </div>
+}
+
 @code {
     public string? LoginResult { get; set; }
     public string? Login { get; set; }
     public string? Password { get; set; }
     public bool SaveMe { get; set; }
-    private ServerSettings ServerSettings;
-    private HttpClient _client;
 
-
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        ServerSettings = Options.Value;
-        _client = new HttpClient();
-        _client.BaseAddress = ServerSettings.Uri;
-        return base.OnInitializedAsync();
+        await base.OnInitializedAsync();
     }
 
     public async Task Logining()
     {
         if (Login != null & Password != null)
         {
-            var response = await _client.PostAsJsonAsync("User/Login", new
-            {
-                 Login, Password
-            });
-            if (response.IsSuccessStatusCode)
-            {
-                var jwt = await response.Content.ReadAsStringAsync();
-                LoginResult = jwt;
-                _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {jwt}");
-                if (SaveMe)
-                {
-                    await LocalStorage.SetItemAsStringAsync("jwt", jwt);
-                }
-                else
-                {
-                    await SessionStorage.SetItemAsStringAsync("jwt", jwt);
-                }
-                
-                NavigationManager.NavigateTo("/chat", forceLoad: true);
-            }
+            LoginResult = await SignInOrUpService.SignIn(Login!, Password!, LocalStorage, SessionStorage, SaveMe);
+            NavigationManager.NavigateTo("/chat", forceLoad: true);
         }
     }
 }
