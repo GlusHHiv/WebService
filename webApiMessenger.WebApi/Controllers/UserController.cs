@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using webApiMessenger.Application.services;
 using webApiMessenger.Domain.Abstractions;
 using webApiMessenger.Domain.Entities;
+using webApiMessenger.Persistence.Repositories;
 using webApiMessenger.Shared.DTOs;
 
 
@@ -19,12 +20,14 @@ namespace webApiMessenger.WebApi.Controllers;
 public class UserController : Controller
 {
     private UserService _userService;
+    private UserRepository _userRepository;
     private RegistrationService _registrationService;
     private readonly ITokenProvider _tokenProvider;
 
-    public UserController(UserService userService, RegistrationService registrationService, ITokenProvider tokenProvider)
+    public UserController(UserService userService, RegistrationService registrationService, ITokenProvider tokenProvider, UserRepository userRepository)
     {
         _userService = userService;
+        _userRepository = userRepository;
         _registrationService = registrationService;
         _tokenProvider = tokenProvider;
     }
@@ -66,21 +69,22 @@ public class UserController : Controller
     }
 
     [HttpGet]
-    public UserPublicDTO Me()
+    public async Task<UserPublicDTO> Me()
     {
         var userId = User.Claims.FirstOrDefault(claim => claim.Type == "Id");
         var userNick = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name);
         var userAge = User.Claims.FirstOrDefault(claim => claim.Type == "Age");
-        var userEmail = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email);
-        var userLogin = User.Claims.FirstOrDefault(claim => claim.Type == "Login");
-
+        var user = await _userRepository.GetById(int.Parse(userId.Value));
+        var userEmail = user.Email;
+        var userLogin = user.Login;
+        
         return new UserPublicDTO
         {
             Age = int.Parse(userAge.Value),
             Id = int.Parse(userId.Value),
             Nick = userNick.Value,
-            Email = userEmail.Value,
-            Login = userLogin.Value
+            Email = userEmail,
+            Login = userLogin
         };
     }
 

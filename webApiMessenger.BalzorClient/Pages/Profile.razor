@@ -1,16 +1,60 @@
 @page "/profile"
-@using Microsoft.Extensions.Options
-@using webApiMessenger.BalzorClient.Options
 @using Blazored.LocalStorage
 @using Blazored.SessionStorage
+@using webApiMessenger.Shared.DTOs
+@using System.Text.Json
+@using Microsoft.Extensions.Options
+@using webApiMessenger.BalzorClient.Options
 @inject IOptions<ServerSettings> Options
 @inject ILocalStorageService LocalStorage
 @inject ISessionStorageService SessionStorage
-@inject NavigationManager NavigationManager
+@inherits LayoutComponentBase
+
 <PageTitle>Profile</PageTitle>
 
 <h3>Profile</h3>
 
+<div class="card">
+    <div class="card mt-3">
+        <div class="card-body">
+            <p>Id: @_user?.Id</p>
+            <p>Nick: @_user?.Nick</p>
+            <p>Age: @_user?.Age</p>
+            <p>Login: @_user?.Login</p>
+            <p>Email: @_user?.Email</p>
+        </div>
+    </div>
+</div>
+
 @code {
+
+    private HttpClient _client;
+    private UserPublicDTO? _user;
+    public IEnumerable<UserWithoutFriendsDTO> friends;
+    public string? jwt;
     
+    protected override async Task OnInitializedAsync()
+    {
+        
+        if (await LocalStorage.ContainKeyAsync("jwt"))
+        {
+            jwt = await LocalStorage.GetItemAsStringAsync("jwt");
+        }
+        else
+        {
+            jwt = await SessionStorage.GetItemAsStringAsync("jwt");
+        }
+        _client = new HttpClient();
+        _client.BaseAddress = Options.Value.Uri;
+        _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {jwt}");
+        _user = await _client.GetFromJsonAsync<UserPublicDTO>("User/Me");
+        friends = await _client.GetFromJsonAsync<IEnumerable<UserWithoutFriendsDTO>>("User/GetFriends");
+
+    }
+
 }
+
+@*<button class="btn btn-link rounded-pill px-3" type="button">
+    <ya-tr-span data-index="4-8" data-translated="false" data-source-lang="en" data-target-lang="ru" data-value="Link"
+                data-translation="Ссылка" data-ch="0" data-type="trSpan">Link</ya-tr-span>
+</button>*@

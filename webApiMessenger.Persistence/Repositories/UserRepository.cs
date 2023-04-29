@@ -55,4 +55,9 @@ public class UserRepository
     {
         return await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Login == login);
     }
+    
+    public async Task<User?> GetById(int id)
+    {
+        return await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+    }
 }
