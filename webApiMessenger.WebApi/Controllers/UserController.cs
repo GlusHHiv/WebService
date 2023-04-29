@@ -66,17 +66,21 @@ public class UserController : Controller
     }
 
     [HttpGet]
-    public UserWithoutFriendsDTO Me()
+    public UserPublicDTO Me()
     {
         var userId = User.Claims.FirstOrDefault(claim => claim.Type == "Id");
         var userNick = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name);
         var userAge = User.Claims.FirstOrDefault(claim => claim.Type == "Age");
+        var userEmail = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email);
+        var userLogin = User.Claims.FirstOrDefault(claim => claim.Type == "Login");
 
-        return new UserWithoutFriendsDTO
+        return new UserPublicDTO
         {
             Age = int.Parse(userAge.Value),
             Id = int.Parse(userId.Value),
-            Nick = userNick.Value
+            Nick = userNick.Value,
+            Email = userEmail.Value,
+            Login = userLogin.Value
         };
     }
 

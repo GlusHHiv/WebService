@@ -19,7 +19,7 @@
                     <NavLink href="/register">SingUp</NavLink>
                 </NotAuthorized>
                 <Authorized>
-                    <span>@_authenticationState?.User?.Identity?.Name</span>
+                    <NavLink href="/profile"><span>@_authenticationState?.User?.Identity?.Name</span></NavLink>
                     <button class="btn btn-outline-danger ms-3" @onclick="LogOut">
                         Log out
                     </button>

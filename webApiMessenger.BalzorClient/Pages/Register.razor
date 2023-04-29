@@ -31,6 +31,8 @@
             <p>Id: @_user?.Id</p>
             <p>Nick: @_user?.Nick</p>
             <p>Age: @_user?.Age</p>
+            <p>Login: @_user?.Login</p>
+            <p>Email: @_user?.Email</p>
         </div>
         <div class="card-footer">
             <button @onclick="Me">ME</button>
@@ -47,7 +49,7 @@
     public int? Age { get; set; }
     private ServerSettings ServerSettings;
     private HttpClient _client;
-    private UserWithoutFriendsDTO? _user;
+    private UserPublicDTO? _user;
 
     protected override Task OnInitializedAsync()
     {
@@ -79,6 +81,6 @@
 
     public async Task Me()
     {
-        _user = await _client.GetFromJsonAsync<UserWithoutFriendsDTO>("User/Me");
+        _user = await _client.GetFromJsonAsync<UserPublicDTO>("User/Me");
     }
 }
