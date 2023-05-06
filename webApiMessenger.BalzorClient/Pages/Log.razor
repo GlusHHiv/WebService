@@ -10,9 +10,9 @@
 
 <div class="card">
     <div>
-        <div><p>Login:</p><input type="text" @bind-value="@Login"/></div>
-        <div><p>Password:</p><input type="text" @bind-value="@Password"/></div>
-        <div><p>Запомнить меня?</p><input type="checkbox" @bind-value="@SaveMe"/></div>
+        <div><p>Login: <input type="text" @bind-value="@Login" /></p></div>
+        <div><p>Password: <input type="text" @bind-value="@Password" /></p></div>
+        <div><p>Запомнить меня? <input type="checkbox" @bind-value="@SaveMe" /></p></div>
         <button @onclick="Logining">Login</button>
     </div>
     <p>Message: @LoginResult</p>
@@ -41,7 +41,11 @@
         if (Login != null & Password != null)
         {
             LoginResult = await SignInOrUpService.SignIn(Login!, Password!, LocalStorage, SessionStorage, SaveMe);
-            NavigationManager.NavigateTo("/chat", forceLoad: true);
+
+            if (LoginResult != null)
+            {
+                NavigationManager.NavigateTo("/");
+            }
         }
     }
 }

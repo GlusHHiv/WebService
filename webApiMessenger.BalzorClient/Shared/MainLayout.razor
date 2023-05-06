@@ -39,6 +39,7 @@
     protected override async Task OnInitializedAsync()
     {
         _authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        AuthenticationStateProvider.AuthenticationStateChanged += task => StateHasChanged();
         await base.OnInitializedAsync();
     }
 

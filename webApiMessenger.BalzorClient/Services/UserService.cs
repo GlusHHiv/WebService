@@ -5,20 +5,22 @@ namespace webApiMessenger.BalzorClient.Services;
 
 public class UserService
 {
-    private HttpClient _client;
+    private HttpClientFactory _clientFactory;
 
     public UserService(HttpClientFactory httpClientFactory)
     {
-        var task = httpClientFactory.CreateHttpClientAsync();
+        _clientFactory = httpClientFactory;
     }
     
     public async Task<UserPublicDTO?> Me()
     {
-        return await _client.GetFromJsonAsync<UserPublicDTO>("User/Me");
+        var client = await _clientFactory.CreateHttpClientAsync();
+        return await client.GetFromJsonAsync<UserPublicDTO>("User/Me");
     }
 
     public async Task<IEnumerable<UserWithoutFriendsDTO>?> GetFriends()
     {
-        return await _client.GetFromJsonAsync<IEnumerable<UserWithoutFriendsDTO>>("User/GetFriends");
+        var client = await _clientFactory.CreateHttpClientAsync();
+        return await client.GetFromJsonAsync<IEnumerable<UserWithoutFriendsDTO>>("User/GetFriends");
     }
 }

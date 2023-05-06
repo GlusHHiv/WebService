@@ -11,6 +11,7 @@ public class HttpClientFactory
     private readonly ServerSettings _serverSettings;
     private readonly ILocalStorageService _localStorage;
     private readonly ISessionStorageService _sessionStorage;
+    private HttpClient? _client = null;
 
     public HttpClientFactory(IOptions<ServerSettings> options, ILocalStorageService LocalStorage, ISessionStorageService SessionStorage)
     {
@@ -21,6 +22,8 @@ public class HttpClientFactory
 
     public async Task<HttpClient> CreateHttpClientAsync(string? token = null)
     {
+        if (_client != null) return _client;
+
         var jwt = token;
         if (await _localStorage.ContainKeyAsync("jwt"))
         {
@@ -31,35 +34,14 @@ public class HttpClientFactory
             jwt ??= await _sessionStorage.GetItemAsStringAsync("jwt");
         }
 
-        var client = new HttpClient();
-        client.BaseAddress = _serverSettings.Uri;
+        _client ??= new HttpClient();
+        _client.BaseAddress = _serverSettings.Uri;
         if (jwt != null)
         {
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
         }
 
-        return client;
-    }
 
-    public HttpClient CreateHttpClient(string? token = null)
-    {
-        var jwt = token;
-        if (_localStorage.ContainKeyAsync("jwt").GetAwaiter().GetResult())
-        {
-            jwt ??= _localStorage.GetItemAsStringAsync("jwt").GetAwaiter().GetResult();
-        }
-        else
-        {
-            jwt ??= _sessionStorage.GetItemAsStringAsync("jwt").GetAwaiter().GetResult();
-        }
-
-        var client = new HttpClient();
-        client.BaseAddress = _serverSettings.Uri;
-        if (jwt != null)
-        {
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
-        }
-
-        return client;
+        return _client;
     }
 }
