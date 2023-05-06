@@ -33,10 +33,10 @@ public class UserController : Controller
     }
 
     [HttpPost]
-    public async Task AddFriend(int user2Id)
+    public async Task AddFriend(AddFriendDTO addFriendDTO)
     { 
         var user1Id = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value);
-        await _userService.AddFriend(user1Id, user2Id);
+        await _userService.AddFriend(user1Id, addFriendDTO.UserId);
     }
     
     [HttpPost]

@@ -18,23 +18,26 @@ public class UserService
         return await client.GetFromJsonAsync<UserPublicDTO>("User/Me");
     }
 
-    public async Task<IEnumerable<UserWithoutFriendsDTO>?> GetFriends()
+    public async Task<ICollection<UserWithoutFriendsDTO>?> GetFriends()
     {
         var client = await _clientFactory.CreateHttpClientAsync();
-        return await client.GetFromJsonAsync<IEnumerable<UserWithoutFriendsDTO>>("User/GetFriends");
+        return await client.GetFromJsonAsync<ICollection<UserWithoutFriendsDTO>>("User/GetFriends");
     }
     
-    public async Task<IEnumerable<UserWithoutFriendsDTO>?> GetUsers()
+    public async Task<ICollection<UserWithoutFriendsDTO>?> GetUsers()
     {
         var client = await _clientFactory.CreateHttpClientAsync();
-        return await client.GetFromJsonAsync<IEnumerable<UserWithoutFriendsDTO>>("User/GetUsers");
+        return await client.GetFromJsonAsync<ICollection<UserWithoutFriendsDTO>>("User/GetUsers");
     }
     
-    public async Task<string?> AddFriend(int id)
+    public async Task AddFriend(int id)
     {
         var client = await _clientFactory.CreateHttpClientAsync();
-        var response = await client.PostAsJsonAsync("User/AddFriend", id);
-        return await response.Content.ReadAsStringAsync();
+        var response = await client.PostAsJsonAsync("User/AddFriend", new AddFriendDTO
+        {
+            UserId = id
+        });
+        response.EnsureSuccessStatusCode();
     }
     
 }
