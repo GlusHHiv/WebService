@@ -14,6 +14,14 @@
             <p>Age: @_user?.Age</p>
             <p>Login: @_user?.Login</p>
             <p>Email: @_user?.Email</p>
+            <div class="table">
+                @foreach (var friend in friends)
+                {
+                    <div>
+                        <span>@friend.Nick</span>
+                    </div>
+                }
+            </div>
         </div>
     </div>
 </div>
@@ -22,7 +30,7 @@
 
     private HttpClient _client;
     private UserPublicDTO? _user;
-    public IEnumerable<UserWithoutFriendsDTO>? friends;
+    public IEnumerable<UserWithoutFriendsDTO>? friends = new List<UserWithoutFriendsDTO>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -31,8 +39,3 @@
     }
 
 }
-
-@*<button class="btn btn-link rounded-pill px-3" type="button">
-    <ya-tr-span data-index="4-8" data-translated="false" data-source-lang="en" data-target-lang="ru" data-value="Link"
-                data-translation="Ссылка" data-ch="0" data-type="trSpan">Link</ya-tr-span>
-</button>*@

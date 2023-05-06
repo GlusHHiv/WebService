@@ -23,4 +23,18 @@ public class UserService
         var client = await _clientFactory.CreateHttpClientAsync();
         return await client.GetFromJsonAsync<IEnumerable<UserWithoutFriendsDTO>>("User/GetFriends");
     }
+    
+    public async Task<IEnumerable<UserWithoutFriendsDTO>?> GetUsers()
+    {
+        var client = await _clientFactory.CreateHttpClientAsync();
+        return await client.GetFromJsonAsync<IEnumerable<UserWithoutFriendsDTO>>("User/GetUsers");
+    }
+    
+    public async Task<string?> AddFriend(int id)
+    {
+        var client = await _clientFactory.CreateHttpClientAsync();
+        var response = await client.PostAsJsonAsync("User/AddFriend", id);
+        return await response.Content.ReadAsStringAsync();
+    }
+    
 }

@@ -1,0 +1,60 @@
+@page "/friends"
+@inject UserService UserService
+@inherits LayoutComponentBase
+<h3>Friends</h3>
+
+<div class="card">
+    <div class="card mt-3">
+        <div class="card-body">
+             @if (users != null && friends != null)
+             {
+                 <table class="table">
+                     <tbody>
+                     @foreach (var user in users)
+                     {
+                         @if (friends.Contains(user))
+                         {
+                             <tr>
+                                 <td>@user.Nick</td>
+                                 <td>@user.Id</td>
+                                 <td>Already Friend</td>
+                             </tr>
+                         }
+                         else
+                         {
+                             <tr>
+                                 <td>@user.Nick</td>
+                                 <td>@user.Nick</td>
+                                 <td>
+                                     <button class="btn btn-success m-1"
+                                             @onclick="() => AddFriend(user.Id)">Add Friend</button></td>
+                             </tr>
+                         }
+                     }
+                     </tbody>
+                 </table>                   
+             }
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private HttpClient _client;
+    public string? Result { get; set; }
+    public IEnumerable<UserWithoutFriendsDTO>? friends;
+    public IEnumerable<UserWithoutFriendsDTO>? users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        friends = await UserService.GetFriends();
+        users = await UserService.GetUsers();
+    }
+    
+    public async Task AddFriend(int id)
+    {
+        Result = await UserService.AddFriend(id);
+
+    }
+    
+}
