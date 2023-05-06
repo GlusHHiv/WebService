@@ -1,11 +1,36 @@
 ﻿@page "/chat"
 @using Microsoft.AspNetCore.SignalR.Client
+@inject JwtService JwtService
+@inject IOptions<ServerSettings> ServerSettingsOptions
 @attribute [Authorize]
 <h3>ChatHub</h3>
 
-<div class="card">
-    <div><input type="text" @bind-value="@Name" /><button @onclick="SayHello">Send</button></div>
-    <span>Message: @SayHelloMessage</span>
+<div class="card my-3">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Count</th>
+        </tr>
+        </thead>
+        <tbody>
+            @if (_allGroupChat != null)
+            {
+                @foreach (var group in _allGroupChat)
+                {
+                    <tr>
+                        <td>@group.Id</td>
+                        <td>@group.Members.Count</td>
+                        <td>
+                            <button class="btn btn-success">
+                                Подключиться к группе
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
 </div>
 
 <div class="card">
@@ -35,6 +60,9 @@
 
 @code {
     private List<string> _messages = new List<string>();
+    private List<GroupChatDTO>? _myGroupChat;
+    private List<GroupChatDTO>? _allGroupChat;
+
     public string Message { get; set; } = string.Empty;
 
     public string? SayHelloMessage { get; set; }
@@ -45,7 +73,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Connection = new HubConnectionBuilder().WithUrl("http://localhost:5288/chathub").Build();
+        var baseUrl = ServerSettingsOptions.Value.Uri;
+        var jwt = await JwtService.GetJwtToken();
+        Connection = new HubConnectionBuilder().WithUrl($"{baseUrl}chathub", options =>
+        {
+            //options.Headers.Add("Authorization", $"Bearer {jwt}");
+            options.AccessTokenProvider = () => Task.FromResult(jwt);
+        }).Build();
+
         Connection.On<string>("ReceiveSayHello", sayHelloMessage =>
         {
             SayHelloMessage = sayHelloMessage;
@@ -56,9 +91,21 @@
             _messages.Add(message);
             StateHasChanged();
         });
+        Connection.On<List<GroupChatDTO>>("ReceiveMyGroupChats", chats =>
+        {
+            _myGroupChat = chats;
+            StateHasChanged();
+        });
+        Connection.On<List<GroupChatDTO>>("ReceiveAllGroupChats", chats =>
+        {
+            _allGroupChat = chats;
+            StateHasChanged();
+        });
 
         await Connection.StartAsync();
         await Connection.SendAsync("SayHello", "World");
+        await Connection.SendAsync("GetAllGroupChats");
+        await Connection.SendAsync("GetMyGroupChats");
         await base.OnInitializedAsync();
     }
 

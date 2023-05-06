@@ -28,9 +28,9 @@ public class GroupService
         await _groupChatRepository.DeleteMemberAndTryDeleteGroupChat(groupChatId, removeUserId);
     }
     
-    public async Task<IEnumerable<GroupChat>> GetGroupChats()
+    public async Task<IEnumerable<GroupChat>> GetGroupChats(int? userId = null)
     {
-        return await _groupChatRepository.GetGroupChats();
+        return await _groupChatRepository.GetGroupChats(userId);
     }
 
     public async Task<bool> GroupChatContainUser(int groupChatId, int userId)

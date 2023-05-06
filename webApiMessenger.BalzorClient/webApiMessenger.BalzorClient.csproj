@@ -32,4 +32,12 @@
     <ProjectReference Include="..\webApiMessenger.Shared\webApiMessenger.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\Loading.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\Loading.razor" />
+  </ItemGroup>
+
 </Project>

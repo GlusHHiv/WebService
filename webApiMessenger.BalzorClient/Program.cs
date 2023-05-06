@@ -21,6 +21,7 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddSingleton<HttpClientFactory>();
 builder.Services.AddSingleton<SignInOrUpService>();
 builder.Services.AddSingleton<UserService>();
+builder.Services.AddSingleton<JwtService>();
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 

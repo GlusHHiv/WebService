@@ -5,46 +5,46 @@
 
 <div class="card">
     <div class="card-body">
-        @if (users != null && friends != null)
-        {
+        <Loading IsLoading="@_isLoading">
             <table class="table">
                 <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Action</th>
-                </tr>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Action</th>
+                    </tr>
                 </thead>
                 <tbody>
-                @foreach (var user in users)
-                {
-                    <tr>
-                        <td>@user.Id</td>
-                        <td>@user.Nick</td>
-                        @if (friends.Contains(user))
-                        {
-                            <td>Already Friend</td>
-                        }
-                        else
-                        {
-                            <td>
-                                <button class="btn btn-success m-1"
-                                        @onclick="() => AddFriend(user.Id)">
-                                    Add Friend
-                                </button>
-                            </td>
-                        }
-                    </tr>
-                }
+                    @foreach (var user in users)
+                    {
+                        <tr>
+                            <td>@user.Id</td>
+                            <td>@user.Nick</td>
+                            @if (friends.Contains(user))
+                            {
+                                <td>Already Friend</td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <button class="btn btn-success m-1"
+                                    @onclick="() => AddFriend(user.Id)">
+                                        Add Friend
+                                    </button>
+                                </td>
+                            }
+                        </tr>
+                    }
                 </tbody>
             </table>
-        }
+        </Loading>
     </div>
 </div>
 
 @code {
 
     private HttpClient _client;
+    private bool _isLoading = true;
     public ICollection<UserWithoutFriendsDTO>? friends;
     public ICollection<UserWithoutFriendsDTO>? users;
 
@@ -52,6 +52,7 @@
     {
         friends = await UserService.GetFriends();
         users = await UserService.GetUsers();
+        _isLoading = false;
     }
 
     public async Task AddFriend(int id)

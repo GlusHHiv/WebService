@@ -66,9 +66,13 @@ public class GroupChatRepository
         }
     }
 
-    public async Task <List<GroupChat>> GetGroupChats()
+    public async Task<List<GroupChat>> GetGroupChats(int? userId = null)
     {
-        return await _dbContext.GroupChats.Include(groupChat => groupChat.Members).AsNoTracking().ToListAsync();
+        var groupsQuery = _dbContext.GroupChats.Include(groupChat => groupChat.Members).AsNoTracking();
+        if (userId.HasValue)
+            groupsQuery = groupsQuery.Where(x => x.Members.Any(member => member.Id == userId));
+
+        return await groupsQuery.ToListAsync();
     }
 
     public async Task<bool>  GroupChatContainUser(int groupChatId, int userId)
