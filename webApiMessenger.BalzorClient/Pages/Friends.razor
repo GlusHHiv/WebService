@@ -1,5 +1,6 @@
 @page "/friends"
 @inject UserService UserService
+@inject NavigationManager NavigationManager
 @inherits LayoutComponentBase
 <h3>Friends</h3>
 
@@ -22,7 +23,12 @@
                             <td>@user.Nick</td>
                             @if (friends.Contains(user))
                             {
-                                <td>Already Friend</td>
+                                <td>
+                                    <button class="btn btn-success m-1"
+                                    @onclick="() => SendMessage(user.Id)">
+                                        Send Message
+                                    </button>
+                                </td>
                             }
                             else
                             {
@@ -60,5 +66,12 @@
         await UserService.AddFriend(id);
         var newFriend = users.FirstOrDefault(x => x.Id == id);
         friends.Add(newFriend);
+    }
+    
+    public async Task SendMessage(int userid)
+    {
+        var id = await UserService.CreateDialogue(userid);
+        
+        NavigationManager.NavigateTo("/chat/id");
     }
 }

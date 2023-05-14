@@ -46,6 +46,11 @@ public class User : BaseEntity
     public List<GroupChat> GroupChats { get; set; }
 
     /// <summary>
+    /// Диалоги в которых участвует пользователь
+    /// </summary>
+    public List<GroupChat> Dialogues { get; set; }
+
+    /// <summary>
     /// Последнее прочитанное сообщения в группе
     /// </summary>
     public List<Message> LastReadMessagesInGroupChat { get; set; }

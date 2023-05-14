@@ -13,9 +13,14 @@ public class GroupService
         _groupChatRepository = groupChatRepository;
     }
 
-    public async Task CreateGroupChat(int user1id, int user2id)
+    public async Task CreateGroupChat(int user1id, List<int> usersId)
     {
-        await _groupChatRepository.AddGroupChat(user1id, user2id);
+        await _groupChatRepository.AddGroupChat(user1id, usersId);
+    }
+    
+    public async Task<int> CreateDialogue(int user1id, int user2id)
+    {
+        return await _groupChatRepository.AddDialogue(user1id, user2id);
     }
 
     public async Task AddMember(int groupChatid, int user1id)

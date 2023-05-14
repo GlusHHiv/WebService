@@ -19,16 +19,23 @@ public class GroupChatController : Controller
     }
 
     [HttpPost]
-    public async Task CreateGroup(int user2id)
+    public async Task CreateGroup(List<int> addFriendsDto)
     {
         var user1id = int.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "Id").Value);
-        await _groupService.CreateGroupChat(user1id, user2id);
+        await _groupService.CreateGroupChat(user1id, addFriendsDto);
     }
     
     [HttpPost]
-    public async Task AddMember(int groupChatid, int user1id)
+    public async Task<int> CreateDialogue(AddFriendDTO user2id)
     {
-        await _groupService.AddMember(groupChatid, user1id);
+        var user1id = int.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "Id").Value);
+        return await _groupService.CreateDialogue(user1id, user2id.UserId);
+    }
+    
+    [HttpPost]
+    public async Task AddMember(AddMemberDTO addMember)
+    {
+        await _groupService.AddMember(addMember.GroupId, addMember.UserId);
     }
     
     [HttpDelete]

@@ -22,14 +22,14 @@ public class MessageController : Controller
 
     
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<GetMessagesDTO>>> GetMessages(int groupChatId)
+    public async Task<ActionResult<IEnumerable<GetMessagesDTO>>> GetMessages(GroupIdDTO groupChatId)
     {
         var userId = int.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "Id").Value);
-        if (! await _groupService.GroupChatContainUser(groupChatId, userId))
+        if (! await _groupService.GroupChatContainUser(groupChatId.GroupId, userId))
             return Forbid("Вы не можете получить сообщения группы в которой не состоите");
         
-        var oldMessages =  await _messengerService.GetOldMessagesFromGroupChat(groupChatId, userId);
-        var newMessages = await _messengerService.GetNewMessagesFromGroupChat(groupChatId, userId);
+        var oldMessages =  await _messengerService.GetOldMessagesFromGroupChat(groupChatId.GroupId, userId);
+        var newMessages = await _messengerService.GetNewMessagesFromGroupChat(groupChatId.GroupId, userId);
 
         return Ok(new GetMessagesDTO
         {

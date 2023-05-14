@@ -40,4 +40,18 @@ public class UserService
         response.EnsureSuccessStatusCode();
     }
     
+    public async Task<int> CreateDialogue(int id)
+    {
+        
+        var client = await _clientFactory.CreateHttpClientAsync();
+        var response =  await client.PostAsJsonAsync("GroupChat/CreateDialogue", new AddFriendDTO
+        {
+            UserId = id
+        });
+        response.EnsureSuccessStatusCode();
+        var strId = await response.Content.ReadAsStrindAsync();
+        return int.Parse(strId);
+        
+    }
+    
 }

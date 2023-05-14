@@ -13,19 +13,46 @@ public class GroupChatRepository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
     
-    public async Task AddGroupChat(int user1id, int user2id)
+    public async Task AddGroupChat(int user1id, List<int> usersId)
+    {        
+        var findUser1 = await _dbContext.Users.Include(user => user.Friends).FirstOrDefaultAsync(u => u.Id == user1id);
+        if (findUser1 == null) throw new ArgumentException($"Пользователь с id {user1id} не существует!");
+        var groupChat = new GroupChat();
+        groupChat.Members = new List<User> { findUser1 };
+        foreach (var user2id in usersId)
+        {
+            var findUser2 = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == user2id);
+            if (findUser2 == null) throw new ArgumentException($"Пользователь с id {user2id} не существует!");
+            if (findUser1.Friends.FirstOrDefault(f => f.Id == user2id) == null) 
+                throw new ArgumentException($"Пользователь с id {user2id} не является вашим другом!");
+            groupChat.Members.Add(findUser2);
+        }
+
+        await _dbContext.GroupChats.AddAsync(groupChat);
+        await _dbContext.SaveChangesAsync();
+        
+    }
+    
+    public async Task AddDialogue(int user1id, int user2id)
     {
         var findUser1 = await _dbContext.Users.Include(user => user.Friends).FirstOrDefaultAsync(u => u.Id == user1id);
         var findUser2 = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == user2id);
-        
         if (findUser1 == null) throw new ArgumentException($"Пользователь с id {user1id} не существует!");
         if (findUser2 == null) throw new ArgumentException($"Пользователь с id {user2id} не существует!");
-        if (findUser1.Friends.FirstOrDefault(f => f.Id == user2id) == null) 
+        if (findUser1.Friends.FirstOrDefault(f => f.Id == user2id) == null)
             throw new ArgumentException($"Пользователь с id {user2id} не является вашим другом!");
-        var groupChat = new GroupChat();
-        groupChat.Members = new List<User> {findUser1, findUser2};
-        await _dbContext.GroupChats.AddAsync(groupChat);
+        var dialogue = findUser1.Dialogues.FirstOrDefault(d => d.Members.Any(m => m.Id == user2id));
+        if (dialogue == null)
+        {
+            dialogue = new GroupChat();
+            
+            dialogue.Members = new List<User> {findUser1, findUser2};
+            findUser1.Dialogues.Add(dialogue);
+            findUser2.Dialogues.Add(dialogue);
+            await _dbContext.GroupChats.AddAsync(dialogue);
+        }
         await _dbContext.SaveChangesAsync();
+        return dialogue.Id;
     }
 
     public async Task RemoveGroupChat(int groupChatId)
