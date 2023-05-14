@@ -14,7 +14,7 @@ public class MessageRepository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public async Task AddMessage(int groupChatId, int senderId, string messageText)
+    public async Task<Message> AddMessage(int groupChatId, int senderId, string messageText)
     {
         if (string.IsNullOrEmpty(messageText) || 
             string.IsNullOrWhiteSpace(messageText)) throw new ArgumentException("Текст сообщения не может быть пустым");
@@ -27,14 +27,17 @@ public class MessageRepository
 
         if (!groupChat.Members.Exists(m => m.Id == senderId)) 
             throw new ArgumentException($"Пользователь с id {senderId} не состоит в группе с id {groupChatId}");
-        
-        await _dbContext.Messages.AddAsync(new Message
+
+        var message = new Message
         {
             Sender = sender,
             GroupChat = groupChat,
             Text = messageText
-        });
-        _dbContext.SaveChanges();
+        };
+        await _dbContext.Messages.AddAsync(message);
+        await _dbContext.SaveChangesAsync();
+
+        return message;
     }
     
     
@@ -49,11 +52,11 @@ public class MessageRepository
         if (member == null)
             throw new ArgumentException($"В группе с id {groupChatId} нет gjkmpjdfntkz!");
         var lastReaded =  member.LastReadMessagesInGroupChat.FirstOrDefault(m => m.GroupChat.Id == groupChatId );
-        
-        
+
+
         if (groupChat.Messages.Count == 0)
-            throw new ArgumentException($"В группе с id {groupChatId} нет сообщений!");
-        
+            return groupChat.Messages;
+
         if (lastReaded == null)
         {
             return new List<Message>();
@@ -81,9 +84,10 @@ public class MessageRepository
          
          if (groupChat == null)
              throw new ArgumentException($"Группа с id {groupChatId} не существует!");
-         if (groupChat.Messages.Count == 0)
-             throw new ArgumentException($"В группе с id {groupChatId} нет сообщений!");
-         
+
+         if (groupChat.Messages.Count == 0) 
+             return groupChat.Messages;
+
          if (lastReaded == null)
          {
              member.LastReadMessagesInGroupChat.Add(groupChat.Messages.LastOrDefault());

@@ -4,6 +4,7 @@ public class GroupChatDTO
 {
     public int Id { get; set; }
     public List<MemberGroupChatDTO> Members { get; set; }
+    public string Type { get; set; }
 }
 
 public class MemberGroupChatDTO

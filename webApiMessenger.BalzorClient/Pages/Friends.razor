@@ -72,6 +72,6 @@
     {
         var id = await UserService.CreateDialogue(userid);
         
-        NavigationManager.NavigateTo("/chat/id");
+        NavigationManager.NavigateTo($"/chat/{id}");
     }
 }

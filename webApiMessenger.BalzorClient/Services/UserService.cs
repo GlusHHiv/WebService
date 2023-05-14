@@ -49,7 +49,7 @@ public class UserService
             UserId = id
         });
         response.EnsureSuccessStatusCode();
-        var strId = await response.Content.ReadAsStrindAsync();
+        var strId = await response.Content.ReadAsStringAsync();
         return int.Parse(strId);
         
     }

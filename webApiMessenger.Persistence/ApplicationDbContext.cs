@@ -12,7 +12,9 @@ public class ApplicationDbContext : DbContext, IDbContext
 
     public ApplicationDbContext(DbContextOptions options) : base(options) 
     {
-        
+        Database.EnsureCreated();
+        //Database.EnsureDeleted();
+        Database.Migrate();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -29,12 +31,5 @@ public class ApplicationDbContext : DbContext, IDbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-    }
-    
-    public ApplicationDbContext()
-    {
-        Database.EnsureCreated();
-        //Database.EnsureDeleted();
-        Database.Migrate();
     }
 }

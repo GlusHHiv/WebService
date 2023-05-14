@@ -14,4 +14,15 @@ public class GroupChat : BaseEntity
     /// Сообщения в группе
     /// </summary>
     public List<Message> Messages { get; set; }
+
+    /// <summary>
+    /// Тип групп-чата
+    /// </summary>
+    public GroupChatType Type { get; set; }
+}
+
+public enum GroupChatType
+{
+    Group = 0,
+    Dialog = 1
 }

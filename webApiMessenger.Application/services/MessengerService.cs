@@ -12,9 +12,9 @@ public class MessengerService
         _messageRepository = messageRepository ?? throw new ArgumentNullException(nameof(messageRepository));
     }
 
-    public async Task SendMessage(int groupChatId, int senderId, string messageText)
+    public async Task<Message> SendMessage(int groupChatId, int senderId, string messageText)
     {
-        await _messageRepository.AddMessage(groupChatId, senderId, messageText);
+        return await _messageRepository.AddMessage(groupChatId, senderId, messageText);
     }
 
     public async Task<IEnumerable<Message>> GetOldMessagesFromGroupChat(int groupChatId, int userId)

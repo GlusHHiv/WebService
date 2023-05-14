@@ -22,7 +22,7 @@
                         <td>@group.Id</td>
                         <td>@group.Members.Count</td>
                         <td>
-                            <button class="btn btn-success">
+                            <button class="btn btn-success" @onclick="async () => await JoinToGroup(group.Id)">
                                 Подключиться к группе
                             </button>
                         </td>
@@ -44,12 +44,18 @@
 </div>
 
 <div class="card m-2">
-    <div class="p-3 h-50">
+    <div class="p-3 h-50 d-flex gap-3 flex-column">
         @foreach (var message in _messages)
         {
-            <div>
-                <span>@message</span>
-            </div>
+            @if (message == _firstNewMessage)
+            {
+                <div class="d-flex flex-row">
+                    <hr class="border-2 border-top border-info w-100">
+                    <span class="px-2 flex-shrink-0 align-self-center">Новые сообщения</span>
+                    <hr class="border-2 border-top border-info w-100">
+                </div>
+            }
+            <Message MessageDTO="@message" />
         }
     </div>
     <div class="d-flex">
@@ -59,16 +65,17 @@
 </div>
 
 @code {
-    private List<string> _messages = new List<string>();
     private List<GroupChatDTO>? _myGroupChat;
     private List<GroupChatDTO>? _allGroupChat;
 
+    private MessageDTO? _firstNewMessage;
+    private List<MessageDTO> _messages = new List<MessageDTO>();
+
     public string Message { get; set; } = string.Empty;
 
-    public string? SayHelloMessage { get; set; }
-    public string? Name { get; set; }
-
     public HubConnection? Connection { get; set; }
+
+    [Parameter]
     public int? GroupChatId { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -80,17 +87,7 @@
             //options.Headers.Add("Authorization", $"Bearer {jwt}");
             options.AccessTokenProvider = () => Task.FromResult(jwt);
         }).Build();
-
-        Connection.On<string>("ReceiveSayHello", sayHelloMessage =>
-        {
-            SayHelloMessage = sayHelloMessage;
-            StateHasChanged();
-        });
-        Connection.On<string>("ReceiveMessage", message =>
-        {
-            _messages.Add(message);
-            StateHasChanged();
-        });
+        
         Connection.On<List<GroupChatDTO>>("ReceiveMyGroupChats", chats =>
         {
             _myGroupChat = chats;
@@ -101,36 +98,52 @@
             _allGroupChat = chats;
             StateHasChanged();
         });
+        Connection.On<List<MessageDTO>>("ReceiveOldMessages", messages =>
+        {
+            _messages.InsertRange(0, messages);
+            StateHasChanged();
+        });
+
+        Connection.On<List<MessageDTO>>("ReceiveNewMessages", messages =>
+        {
+            _firstNewMessage = messages.FirstOrDefault();
+            _messages.AddRange(messages);
+            StateHasChanged();
+        });
+
+        Connection.On<MessageDTO>("ReceiveMessage", message =>
+        {
+            _messages.Add(message);
+            StateHasChanged();
+        });
 
         await Connection.StartAsync();
-        await Connection.SendAsync("SayHello", "World");
         await Connection.SendAsync("GetAllGroupChats");
         await Connection.SendAsync("GetMyGroupChats");
-        await base.OnInitializedAsync();
-    }
 
-    public async void SayHello()
-    {
-        await Connection?.SendAsync("SayHello", Name);
+        if (GroupChatId.HasValue)
+        {
+            await Connection.SendAsync("Join", GroupChatId.Value);
+            // await Connection.SendAsync("GetOldMessages", GroupChatId.Value);
+            // await Connection.SendAsync("GetNewMessages", GroupChatId.Value);
+        }
+        
+        await base.OnInitializedAsync();
     }
 
     public async void SendMessage()
     {
-        if (!string.IsNullOrEmpty(Message) && !string.IsNullOrEmpty(GroupChatId))
+        if (!string.IsNullOrEmpty(Message) && GroupChatId.HasValue)
         {
-            await Connection?.SendAsync("SendMessage", GroupChatId, Message);
-            _messages.Add(Message);
+            await Connection?.SendAsync("SendMessage", GroupChatId.Value, Message);
             Message = string.Empty;
         }
 
     }
 
-    private async Task JoinToGroup()
+    private async Task JoinToGroup(int groupId)
     {
-        if (GroupChatId != null)
-        {
-            await Connection.SendAsync("Join", GroupChatId);
-        }
+        await Connection.SendAsync("Join", groupId);
     }
 
 }

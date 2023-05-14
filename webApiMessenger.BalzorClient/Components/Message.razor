@@ -1,0 +1,15 @@
+﻿<div class="py-1 px-2 d-flex flex-column">
+    <div class="@(_isSenderNameHovering ? "align-self-start text-info" : "align-self-start")"
+         @onmouseenter="() => _isSenderNameHovering = true"
+        @onmouseleave="() => _isSenderNameHovering = false"
+        >@MessageDTO.SenderNick</div>
+    <div class="rounded bg-primary bg-gradient bg-opacity-25 text-dark p-2">@MessageDTO.Text</div>
+    <div class="align-self-end fs-6">@MessageDTO.SendDateTime.ToShortTimeString()</div>
+</div>
+
+@code {
+    [Parameter]
+    public MessageDTO MessageDTO { get; set; }
+
+    private bool _isSenderNameHovering = false;
+}
