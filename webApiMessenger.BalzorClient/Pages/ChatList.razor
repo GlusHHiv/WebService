@@ -1,0 +1,73 @@
+@page "/chatlist"
+@using Microsoft.AspNetCore.SignalR.Client
+@inject JwtService JwtService
+@inject NavigationManager NavigationManager
+@inject IOptions<ServerSettings> ServerSettingsOptions
+@attribute [Authorize]
+<h3>ChatList</h3>
+
+<div class="card my-3">
+    <table class="table">
+        <thead>
+        <tr>
+            <div>
+                Чаты
+            </div>
+        </tr>
+        </thead>
+        <tbody>
+        @if (_myGroupChat != null)
+        {
+            @foreach (var group in _myGroupChat)
+            {
+                <tr>
+                     <NavLink class="nav-link" href="chat/@group.Id">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> @group.Members
+                    </NavLink>
+                    
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+</div>
+
+
+@code {
+    private List<GroupChatDTO>? _myGroupChat;
+
+    public HubConnection? Connection { get; set; }
+
+    [Parameter]
+    public int? GroupChatId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var baseUrl = ServerSettingsOptions.Value.Uri;
+        var jwt = await JwtService.GetJwtToken();
+        Connection = new HubConnectionBuilder().WithUrl($"{baseUrl}chathub", options =>
+        {
+            options.AccessTokenProvider = () => Task.FromResult(jwt);
+        }).Build();
+        
+        Connection.On<List<GroupChatDTO>>("ReceiveMyGroupChats", chats =>
+        {
+            _myGroupChat = chats;
+            StateHasChanged();
+        });
+        await Connection.StartAsync();
+        await Connection.SendAsync("GetMyGroupChats");
+
+        if (GroupChatId.HasValue)
+        {
+            await Connection.SendAsync("Join", GroupChatId.Value);
+        }
+        
+        await base.OnInitializedAsync();
+    }
+    
+    public async Task MoveToGroup(int id)
+    {
+        NavigationManager.NavigateTo($"/chat/{id}");
+    }
+}

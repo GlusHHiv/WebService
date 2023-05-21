@@ -137,6 +137,7 @@
         {
             await Connection?.SendAsync("SendMessage", GroupChatId.Value, Message);
             Message = string.Empty;
+            _firstNewMessage = null;
         }
 
     }

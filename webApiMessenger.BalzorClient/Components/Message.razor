@@ -1,5 +1,5 @@
 ﻿<div class="py-1 px-2 d-flex flex-column">
-    <div class="@(_isSenderNameHovering ? "align-self-start text-info" : "align-self-start")"
+    <div class="@(_isSenderNameHovering ? "align-self-start text-info" : "align-self-start")" width: min-content
          @onmouseenter="() => _isSenderNameHovering = true"
         @onmouseleave="() => _isSenderNameHovering = false"
         >@MessageDTO.SenderNick</div>

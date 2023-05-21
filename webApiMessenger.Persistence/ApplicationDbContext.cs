@@ -12,7 +12,7 @@ public class ApplicationDbContext : DbContext, IDbContext
 
     public ApplicationDbContext(DbContextOptions options) : base(options) 
     {
-        Database.EnsureCreated();
+        //Database.EnsureCreated();
         //Database.EnsureDeleted();
         Database.Migrate();
     }
