@@ -1,0 +1,33 @@
+﻿<div class="@GetClasses()" @onmouseenter="() => _isHovering = true" @onmouseleave="() => _isHovering = false">
+    <NavLink class="nav-link" href="@($"chat/{GroupChat.Id}")">
+        @if (GroupChat.Type.ToLower() == "dialog")
+        {
+            <span class="oi oi-list-rich me-2" aria-hidden="true"></span> @GroupChat.Members.Select(x => x.Nick).First(x => x != UserName)
+        }
+        else
+        {
+            <span class="oi oi-list-rich me-2" aria-hidden="true"></span> @(string.Join(",", GroupChat.Members.Select(x => x.Nick).Where(x => x != UserName)))
+        }
+
+    </NavLink>
+</div>
+
+@code {
+    [Parameter]
+    public GroupChatDTO GroupChat { get; set; }
+
+    [Parameter]
+    public string UserName { get; set; }
+
+    private bool _isHovering { get; set; }
+
+    private string GetClasses()
+    {
+        var classes = "p-2";
+        if (_isHovering)
+            classes = classes + " bg-light";
+
+        return classes;
+    }
+
+}

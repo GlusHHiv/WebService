@@ -5,53 +5,83 @@
 <h3>Friends</h3>
 
 <div class="card">
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Создать групповой чат</button>
     <div class="card-body">
         <Loading IsLoading="@_isLoading">
-            <table class="table">
-                <thead>
+            <UserList Users="users">
+                <TableHead>
                     <tr>
                         <th>Id</th>
                         <th>Name</th>
                         <th>Action</th>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var user in users)
-                    {
-                        <tr>
-                            <td>@user.Id</td>
-                            <td>@user.Nick</td>
-                            @if (friends.Contains(user))
-                            {
-                                <td>
-                                    <button class="btn btn-success m-1"
-                                    @onclick="() => SendMessage(user.Id)">
-                                        Send Message
-                                    </button>
-                                </td>
-                            }
-                            else
-                            {
-                                <td>
-                                    <button class="btn btn-success m-1"
-                                    @onclick="() => AddFriend(user.Id)">
-                                        Add Friend
-                                    </button>
-                                </td>
-                            }
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                </TableHead>
+                <TableRow>
+                    <tr>
+                        <td>@context.Id</td>
+                        <td>@context.Nick</td>
+                        @if (friends.Contains(context))
+                        {
+                            <td>
+                                <button class="btn btn-success m-1"
+                                        @onclick="() => SendMessage(context.Id)">
+                                    Send Message
+                                </button>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                <button class="btn btn-success m-1"
+                                        @onclick="() => AddFriend(context.Id)">
+                                    Add Friend
+                                </button>
+                            </td>
+                        }
+                    </tr>
+                </TableRow>
+            </UserList>
         </Loading>
     </div>
 </div>
 
-@code {
+<Loading IsLoading="@_isLoading">
+    <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Выберите участников группы</h5>
+                </div>
+                <div class="modal-body">
+                    <UserList Users="@friends">
+                        <TableHead>
+                            <tr>
+                                <th></th>
+                                <th>Name</th>
+                            </tr>
+                        </TableHead>
+                        <TableRow>
+                            <tr>
+                                <td><input class="form-check-input" type="checkbox" @onclick="() => ToggleUserSelect(context)" /></td>
+                                <td>@context.Nick</td>
+                            </tr>
+                        </TableRow>
+                    </UserList>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="Cancel">Отменить</button>
+                    <button type="button" class="btn btn-primary" @onclick="CreateChatGroup">Создать</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</Loading>
 
+@code {
     private HttpClient _client;
     private bool _isLoading = true;
     public ICollection<UserWithoutFriendsDTO>? friends;
+    public ICollection<UserWithoutFriendsDTO> _selectedFriends = new List<UserWithoutFriendsDTO>();
     public ICollection<UserWithoutFriendsDTO>? users;
 
     protected override async Task OnInitializedAsync()
@@ -67,11 +97,36 @@
         var newFriend = users.FirstOrDefault(x => x.Id == id);
         friends.Add(newFriend);
     }
-    
+
     public async Task SendMessage(int userid)
     {
         var id = await UserService.CreateDialogue(userid);
-        
+
         NavigationManager.NavigateTo($"/chat/{id}");
     }
+
+    private void Cancel()
+    {
+        _selectedFriends = new List<UserWithoutFriendsDTO>();
+    }
+
+    private async Task CreateChatGroup()
+    {
+        var userIds = _selectedFriends.Select(x => x.Id);
+        await UserService.CreateGroupChat(userIds);
+        NavigationManager.NavigateTo("/chatlist");
+    }
+
+    private void ToggleUserSelect(UserWithoutFriendsDTO friend)
+    {
+        if (_selectedFriends.Contains(friend))
+        {
+            _selectedFriends.Remove(friend);
+        }
+        else
+        {
+            _selectedFriends.Add(friend);
+        }
+    }
+
 }

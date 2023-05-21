@@ -1,0 +1,24 @@
+﻿<table class="table">
+    <thead>
+        @TableHead
+    </thead>
+    <tbody>
+    @foreach (var user in Users)
+    {
+        @TableRow(user)
+    }
+    </tbody>
+</table>
+
+@code {
+
+    [Parameter]
+    public IEnumerable<UserWithoutFriendsDTO> Users { get; set; }
+
+    [Parameter]
+    public RenderFragment TableHead { get; set; }
+
+    [Parameter]
+    public RenderFragment<UserWithoutFriendsDTO> TableRow { get; set; }
+
+}

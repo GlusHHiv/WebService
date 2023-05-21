@@ -53,5 +53,11 @@ public class UserService
         return int.Parse(strId);
         
     }
-    
+
+    public async Task CreateGroupChat(IEnumerable<int> userIds)
+    {
+        var client = await _clientFactory.CreateHttpClientAsync();
+        var response = await client.PostAsJsonAsync("GroupChat/CreateGroup", userIds);
+        response.EnsureSuccessStatusCode();
+    }
 }

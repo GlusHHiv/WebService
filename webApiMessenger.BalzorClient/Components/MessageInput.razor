@@ -1,0 +1,28 @@
+﻿<div class="d-flex">
+    <input class="flex-grow-1" type="text"
+           @bind-value="@Message" @bind-value:event="oninput" />
+    <button @onclick="SendMessage">Send</button>
+</div>
+
+@code {
+    private string _message;
+
+    [Parameter]
+    public string Message
+    {
+        get => _message;
+        set
+        {
+            if (_message == value) return;
+
+            _message = value;
+            MessageChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> MessageChanged { get; set; }
+
+    [Parameter]
+    public EventCallback SendMessage { get; set; }
+}

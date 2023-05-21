@@ -3,33 +3,21 @@
 @inject JwtService JwtService
 @inject NavigationManager NavigationManager
 @inject IOptions<ServerSettings> ServerSettingsOptions
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize]
-<h3>ChatList</h3>
 
-<div class="card my-3">
-    <table class="table">
-        <thead>
-        <tr>
-            <div>
-                Чаты
-            </div>
-        </tr>
-        </thead>
-        <tbody>
-        @if (_myGroupChat != null)
+<div class="d-flex flex-row">
+    <h3>Чаты</h3>
+    
+</div>
+<div class="card my-3 p-2 d-flex gap-1">
+    @if (_myGroupChat != null)
+    {
+        @foreach (var group in _myGroupChat)
         {
-            @foreach (var group in _myGroupChat)
-            {
-                <tr>
-                     <NavLink class="nav-link" href="chat/@group.Id">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> @group.Members
-                    </NavLink>
-                    
-                </tr>
-            }
+            <ChatListItem GroupChat="@group" UserName="@_userName" />
         }
-        </tbody>
-    </table>
+    }
 </div>
 
 
@@ -41,8 +29,13 @@
     [Parameter]
     public int? GroupChatId { get; set; }
 
+    private AuthenticationState? _authenticationState = null;
+    private string _userName;
+
     protected override async Task OnInitializedAsync()
     {
+        _authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _userName = _authenticationState!.User!.Identity!.Name!;
         var baseUrl = ServerSettingsOptions.Value.Uri;
         var jwt = await JwtService.GetJwtToken();
         Connection = new HubConnectionBuilder().WithUrl($"{baseUrl}chathub", options =>

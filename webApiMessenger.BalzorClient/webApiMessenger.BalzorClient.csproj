@@ -38,6 +38,16 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Components\Loading.razor" />
+    <_ContentIncludedByDefault Remove="Components\MessageInput.razor" />
+    <_ContentIncludedByDefault Remove="Components\UserList.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\UserList.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\MessageInput.razor" />
   </ItemGroup>
 
 </Project>
